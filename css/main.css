@@ -1,0 +1,97 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.intro-container {
+  position: relative; /* Asegura que los elementos hijos respeten la posición relativa */
+  background-image: url("../img/fondorest.jpg");
+  background-size: cover;
+  background-position: center;
+  padding: 20px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center; /* Centra los elementos hijos horizontalmente */
+  color: #ffffff; /* Cambiar el color del texto si la imagen de fondo es oscura */
+  width: 100%; /* Ajustar el ancho del contenedor al 100% */
+  height: 600px; /* Ajustar la altura del contenedor según sea necesario */
+}
+
+.intro-container .logo img {
+  max-width: 100px; /* Reducir el tamaño máximo del logo */
+}
+
+.intro-container .container {
+  width: 80%; /* Ajustar el ancho del encabezado */
+  margin: 0 auto; /* Centrar el encabezado horizontalmente */
+  display: flex; /* Utiliza flexbox para alinear los elementos hijos */
+  justify-content: space-between; /* Espacia los elementos hijos de manera uniforme */
+  align-items: center; /* Centra los elementos hijos verticalmente */
+  padding: 0 20px; /* Añade un relleno a los lados del encabezado */
+}
+
+.intro-container nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.container nav {
+  margin: 0 auto; /* Añadir margen automático a los lados para centrar */
+}
+
+.container nav ul li {
+  display: inline;
+  margin-left: 20px;
+}
+
+.container nav ul li a {
+  text-decoration: none;
+  color: #ffffff;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.container nav ul li a:hover {
+  color: #ff6b6b;
+}
+
+.intro {
+  margin-top: 50px;
+  padding: 50px 0;
+}
+
+.intro h2 {
+  margin-bottom: 20px;
+}
+
+.intro p {
+  margin-bottom: 30px;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #ff6b6b;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #e64c4c;
+}
+
+.foot {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+.content {
+  text-align: center;
+}
+
+.oculto {
+  display: none;
+}

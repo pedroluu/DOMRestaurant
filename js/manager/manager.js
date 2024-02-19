@@ -763,6 +763,32 @@ const RestaurantManager = (function () {
 
       return newRestaurant;
     }
+
+    getRandomDishes() {
+      // Obtener claves del mapa
+      const keys = Array.from(this.#dishes.keys());
+
+      // Almacenar los objetos aleatorios seleccionados
+      const objetosAleatorios = [];
+
+      // Obtener tres objetos aleatorios del mapa
+      for (let i = 0; i < 3; i++) {
+        // Generar un índice aleatorio dentro del rango de las claves del mapa
+        const indiceAleatorio = Math.floor(Math.random() * keys.length);
+
+        // Obtener la clave y el valor correspondiente al índice aleatorio
+        const claveAleatoria = keys[indiceAleatorio];
+        const objetoAleatorio = this.#dishes.get(claveAleatoria);
+
+        // Almacenar el objeto aleatorio seleccionado
+        objetosAleatorios.push(objetoAleatorio);
+
+        // Eliminar la clave seleccionada para evitar seleccionarla nuevamente
+        keys.splice(indiceAleatorio, 1);
+      }
+
+      return objetosAleatorios;
+    }
   }
 
   function init() {

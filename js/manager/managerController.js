@@ -18,7 +18,7 @@ class ManagerController {
 
     this.onLoad();
     this.onInit();
-    this[VIEW].bindInit(this.handleInit);
+    // this[VIEW].bindInit(this.handleInit);
   }
 
   [LOAD_MANAGER_OBJECTS]() {
@@ -71,7 +71,19 @@ class ManagerController {
     dish10.ingredients = "base de galleta, queso cabrales y huevo ";
     dish11.ingredients = " bolas de helado de fresa, láminas de galleta";
     dish12.ingredients = " café, mascarpone, yemas de huevo y bizcochos";
-    // // dish1.image = `https://via.placeholder.com/258x172.jpg?text=${dish1.name}`;
+
+    dish1.image = "./img/ensaladaCesar.jpg";
+    dish2.image = "./img/sopa.jpg";
+    dish3.image = "./img/PastaAlfredo.jpg";
+    dish4.image = "./img/pizzamar.jpg";
+    dish5.image = "./img/filete.jpg";
+    dish6.image = "./img/salmon.jpg";
+    dish7.image = "./img/pollo.jpg";
+    dish8.image = "./img/cocido.jpg";
+    dish9.image = "./img/flan.jpg";
+    dish10.image = "./img/tartita.jpg";
+    dish11.image = "./img/helado.jpg";
+    dish12.image = "./img/tira.jpg";
 
     this[MODEL].assignCategoryToDish(category1, dish1, dish2, dish3, dish4);
     this[MODEL].assignCategoryToDish(category2, dish5, dish6, dish7, dish8);
@@ -141,13 +153,21 @@ class ManagerController {
 
   onLoad = () => {
     this[LOAD_MANAGER_OBJECTS]();
+    this.onAddCategory();
+  };
+
+  onInit = () => {
+    this[VIEW].showCategories(this[MODEL].getCategories());
+    this[VIEW].showDishes(this[MODEL].getRandomDishes());
     console.log(this[MODEL]);
   };
 
-  onInit = () => {};
-
   handleInit = () => {
     this.onInit();
+  };
+
+  onAddCategory = () => {
+    this[VIEW].showCategoriesInMenu(this[MODEL].getCategories());
   };
 }
 

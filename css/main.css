@@ -30,6 +30,7 @@ body {
 }
 
 .intro-container nav ul {
+  width: auto;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -55,16 +56,16 @@ body {
 }
 
 .intro {
-  margin-top: 50px;
+  margin-top: 90px;
   padding: 50px 0;
 }
 
 .intro h2 {
   margin-bottom: 20px;
 }
-
 .intro p {
   margin-bottom: 30px;
+  font-weight: bold;
 }
 
 .button {
@@ -75,6 +76,10 @@ body {
   text-decoration: none;
   border-radius: 5px;
   transition: background-color 0.3s;
+}
+
+#cat {
+  margin-top: 30px;
 }
 
 .button:hover {

@@ -12,7 +12,7 @@
     <title>Document</title>
 </head>
 
-<body>
+<body class="bg-dark">
     <!-- Cabecera -->
     <header class="intro-container">
         <div class="container">
@@ -20,18 +20,16 @@
                 <a id="logo" href="#"><img src="./img/logo.png" alt="Logo de tu restaurante"></a>
             </div>
             <nav>
-                <ul>
+                <ul class="nav">
                     <li><a id="init" href="#">Inicio</a></li>
                     <li><a href="#">Menú</a></li>
-                    <li><a href="#">Reservas</a></li>
                     <li><a href="#">Contacto</a></li>
                 </ul>
             </nav>
         </div>
         <div class="intro">
-            <h2>Bienvenido a Nombre de tu Restaurante</h2>
+            <h2>Bienvenido a Grill House</h2>
             <p>Disfruta de nuestra exquisita comida y ambiente acogedor.</p>
-            <a href="#" class="button">Ver menú</a>
         </div>
     </header>
 
@@ -47,54 +45,10 @@
     </head>
 
     <body>
-        <section id="content" class="content bg-dark">
-            <p class="categories fs-1  fw-bold text-center text-white">Categorías</p>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-5">Texto encima de la imagen</p>
-                        </div>
-                        <div class="contenedor-img">
-                            <img src="./img/entrante.jpg" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-5">Texto encima de la imagen</p>
-                        </div>
-                        <div class="contenedor-img">
-                            <img src="./img/segundo.jpg" class="img-fluid">
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-5">Texto encima de la imagen</p>
-                        </div>
-                        <div class="contenedor-img">
-                            <img src="./img/postre.jpg" class="img-fluid">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-6">Texto debajo de la imagen</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-6">Texto debajo de la imagen</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="text-center text-white">
-                            <p class="fs-6">Texto debajo de la imagen</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <h1 id="cat" class="text-center text-white">Categories</h1>
+        <div id="categories"></div>
+
+        <div id="dishes"></div>
 
         <nav class="oculto" aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -199,3 +153,53 @@
     </body>
 
     </html>
+
+
+    <!-- <section id="categories" class="content bg-dark">
+        <p class="categories fs-1  fw-bold text-center text-white">Categorías</p>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-5">Texto encima de la imagen</p>
+                    </div>
+                    <div class="contenedor-img">
+                        <img src="./img/entrante.jpg" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-5">Texto encima de la imagen</p>
+                    </div>
+                    <div class="contenedor-img">
+                        <img src="./img/segundo.jpg" class="img-fluid">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-5">Texto encima de la imagen</p>
+                    </div>
+                    <div class="contenedor-img">
+                        <img src="./img/postre.jpg" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-6">Texto debajo de la imagen</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-6">Texto debajo de la imagen</p>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="text-center text-white">
+                        <p class="fs-6">Texto debajo de la imagen</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section> -->

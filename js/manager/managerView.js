@@ -3,6 +3,7 @@ class ManagerView {
     this.categories = document.getElementById("categories");
     this.dishes = document.getElementById("dishes");
     this.menu = document.querySelector(".nav");
+    this.ficha = document.getElementById("ficha-elemento");
   }
 
   bindInit(handler) {
@@ -29,6 +30,27 @@ class ManagerView {
     for (const link of links) {
       link.addEventListener("click", (event) => {
         handler(event.currentTarget.dataset.category);
+      });
+    }
+  }
+
+  bindDishDetails(handler) {
+    const dishDetails = document.getElementById("dishes-list");
+    const links = dishDetails.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        console.log(event.currentTarget);
+        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
+      });
+    }
+  }
+
+  bindDishDetailsByCategory(handler) {
+    const dishDetails = document.getElementById("dishes-list-category");
+    const links = dishDetails.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
       });
     }
   }
@@ -85,9 +107,9 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a dish-category="${dish.Dish.name}" href="#product-list" class="text-decoration-none">
+                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                     <div class="dish-list-image">
-                        <img alt="${dish.name}" src="${dish.Dish.image}" />
+                        <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                     </div>
                     <div class="dish-list-text text-white">
                         <h3>${dish.Dish.name}</h3>
@@ -100,6 +122,36 @@ class ManagerView {
     }
 
     this.dishes.append(container);
+  }
+
+  showDish(dish) {
+    if (this.ficha.children.length > 0) this.ficha.children[0].remove();
+    this.ficha.classList.remove("oculto");
+
+    const container = document.createElement("div");
+    container.id = "dish-details";
+    container.style.display = "flex";
+    container.style.justifyContent = "space-around";
+
+    container.insertAdjacentHTML(
+      "beforeend",
+      `
+          <div class="col col-md-6 bg-dark text-center justify-content-center">
+              <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                  <div class="dish-list-image">
+                      <img alt="${dish.name}" src="${dish.Dish.image}" />
+                  </div>
+                  <div class="dish-list-text text-white">
+                      <h3>${dish.Dish.name}</h3>
+                      <div>Descripción: ${dish.Dish.description}</div>
+                      <div>Ingredientes: ${dish.Dish.ingredients}</div>
+                  </div>
+              </a>
+          </div>
+      `
+    );
+
+    this.ficha.append(container);
   }
 
   showCategoriesInMenu(categories) {
@@ -135,7 +187,7 @@ class ManagerView {
       this.categories.children[0].remove();
 
     const container = document.createElement("div");
-    container.id = "dish-list";
+    container.id = "dishes-list-category";
     container.classList.add("row");
     container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
     container.style.marginTop = "5%";
@@ -148,7 +200,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a dish-category="${name}" href="#product-list" class="text-decoration-none">
+                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                     <div class="dish-list-image">
                         <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                     </div>

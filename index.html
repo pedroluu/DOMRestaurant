@@ -50,52 +50,9 @@
 
         <div id="dishes"></div>
 
-        <nav class="oculto" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="#">Categoría 1</a></li>
-                <li class="breadcrumb-item"><a href="#">Subcategoría 1</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Elemento 1</li>
-            </ol>
-        </nav>
-
-        <!-- Contenedor de listado de elementos -->
-        <div id="listado-elementos" class="container oculto">
-            <h2>Listado de Elementos</h2>
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="card">
-                        <div class="card-body">
-                            Elemento 1
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="card">
-                        <div class="card-body">
-                            Elemento 2
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="card">
-                        <div class="card-body">
-                            Elemento 3
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Contenedor de ficha de elemento individual -->
         <div id="ficha-elemento" class="container oculto">
-            <h2>Ficha de Elemento</h2>
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Nombre del Elemento</h3>
-                    <p class="card-text">Descripción del elemento.</p>
-                </div>
-            </div>
         </div>
 
 
@@ -140,15 +97,6 @@
             </script>
 
         <script src="./js/mitienda.js" type="module"></script>
-
-        <script>
-            $(document).ready(function () {
-                // Función para mostrar elementos ocultos
-                function mostrarElemento(id) {
-                    $("#" + id).removeClass("oculto");
-                }
-            });
-        </script>
 
     </body>
 

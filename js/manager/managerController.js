@@ -160,6 +160,7 @@ class ManagerController {
     this[VIEW].showCategories(this[MODEL].getCategories());
     this[VIEW].showDishes(this[MODEL].getRandomDishes());
     this[VIEW].bindDishCategoryList(this.handleDishCategoryList);
+    this[VIEW].bindDishDetails(this.handleDishDetails);
   };
 
   handleInit = () => {
@@ -174,7 +175,14 @@ class ManagerController {
       dishes.push(this[MODEL].createDish(dishName));
     }
     this[VIEW].listDishes(dishes, category.name);
+    this[VIEW].bindDishDetailsByCategory(this.handleDishDetails);
   };
+
+  handleDishDetails = (name) => {
+    const dish = this[MODEL].createDish(name);
+    this[VIEW].showDish(dish);
+  };
+
   onAddCategory = () => {
     this[VIEW].showCategoriesInMenu(this[MODEL].getCategories());
     this[VIEW].bindDishCategoryListInMenu(this.handleDishCategoryList);

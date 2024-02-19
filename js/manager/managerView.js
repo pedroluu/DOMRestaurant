@@ -14,9 +14,28 @@ class ManagerView {
     });
   }
 
+  bindDishCategoryList(handler) {
+    const categoryList = document.getElementById("category-list");
+    const links = categoryList.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.dataset.category);
+      });
+    }
+  }
+  bindDishCategoryListInMenu(handler) {
+    const navCats = document.getElementById("navCats");
+    const links = navCats.nextSibling.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.dataset.category);
+      });
+    }
+  }
+
   showCategories(categories) {
     if (this.categories.children.length > 0)
-      this.categories.children[1].remove();
+      this.categories.children[0].remove();
 
     const container = document.createElement("div");
     container.id = "category-list";
@@ -50,10 +69,10 @@ class ManagerView {
   }
 
   showDishes(dishes) {
-    if (this.dishes.children.length > 0) this.dishes.children[1].remove();
+    if (this.dishes.children.length > 0) this.dishes.children[0].remove();
 
     const container = document.createElement("div");
-    container.id = "category-list";
+    container.id = "dishes-list";
     container.classList.add("row");
     container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
     container.style.marginTop = "5%";
@@ -66,11 +85,11 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a data-category="${dish.Dish.name}" href="#product-list" class="text-decoration-none">
-                    <div class="cat-list-image">
+                <a dish-category="${dish.Dish.name}" href="#product-list" class="text-decoration-none">
+                    <div class="dish-list-image">
                         <img alt="${dish.name}" src="${dish.Dish.image}" />
                     </div>
-                    <div class="cat-list-text text-white">
+                    <div class="dish-list-text text-white">
                         <h3>${dish.Dish.name}</h3>
                         <div>${dish.Dish.description}</div>
                     </div>
@@ -80,7 +99,7 @@ class ManagerView {
       );
     }
 
-    this.categories.append(container);
+    this.dishes.append(container);
   }
 
   showCategoriesInMenu(categories) {
@@ -100,14 +119,50 @@ class ManagerView {
     container.classList.add("dropdown-menu");
     container.style.backgroundColor = "black";
     for (const category of categories) {
-      console.log(category);
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a datacategory="${category.name}" class="dropdown-item" href="#productlist">${category.name}</a></li>`
+        `<li><a data-category="${category.name}" class="dropdown-item" href="#categories">${category.name}</a></li>`
       );
     }
     li.append(container);
     this.menu.append(li);
+  }
+
+  listDishes(dishes, name) {
+    console.log(dishes);
+    this.categories.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.id = "dish-list";
+    container.classList.add("row");
+    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
+    container.style.marginTop = "5%";
+    container.style.marginBottom = "5%";
+    container.style.marginLeft = "18%"; // Margen izquierdo automático
+    container.style.marginRight = "auto"; // Margen derecho automático
+
+    for (const dish of dishes) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+            <div class="col-lg-3 col-md-6 bg-dark text-center">
+                <a dish-category="${name}" href="#product-list" class="text-decoration-none">
+                    <div class="dish-list-image">
+                        <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
+                    </div>
+                    <div class="dish-list-text text-white">
+                        <h3>${dish.Dish.name}</h3>
+                        <div>${dish.Dish.description}</div>
+                    </div>
+                </a>
+            </div>
+        `
+      );
+    }
+    container.insertAdjacentHTML("afterbegin", `<h1>${name}</h1>`);
+    this.categories.append(container);
   }
 }
 

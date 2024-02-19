@@ -18,7 +18,7 @@ class ManagerController {
 
     this.onLoad();
     this.onInit();
-    // this[VIEW].bindInit(this.handleInit);
+    this[VIEW].bindInit(this.handleInit);
   }
 
   [LOAD_MANAGER_OBJECTS]() {
@@ -159,15 +159,26 @@ class ManagerController {
   onInit = () => {
     this[VIEW].showCategories(this[MODEL].getCategories());
     this[VIEW].showDishes(this[MODEL].getRandomDishes());
-    console.log(this[MODEL]);
+    this[VIEW].bindDishCategoryList(this.handleDishCategoryList);
   };
 
   handleInit = () => {
     this.onInit();
   };
 
+  handleDishCategoryList = (name) => {
+    const category = this[MODEL].createCategory(name);
+    const CategoryIterator = this[MODEL].getDishesInCategory(category);
+    const dishes = [];
+    for (const dishName of CategoryIterator) {
+      dishes.push(this[MODEL].createDish(dishName));
+    }
+    this[VIEW].listDishes(dishes, category.name);
+  };
   onAddCategory = () => {
     this[VIEW].showCategoriesInMenu(this[MODEL].getCategories());
+    this[VIEW].bindDishCategoryListInMenu(this.handleDishCategoryList);
+    console.log(this[MODEL]);
   };
 }
 

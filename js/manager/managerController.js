@@ -60,7 +60,7 @@ class ManagerController {
       "lechuga, pollo a la plancha, salsa césar, crutones de pan y pasas";
     dish2.ingredients = "tomates, ajo, cebolla, orégano y albahaca";
     dish3.ingredients = "tallarines al huevo, ternera, salsa Alfredo";
-    dish4.ingredients = " tomate, queso y albahaca";
+    dish4.ingredients = " tomate, queso y albahaca (opcional base de nata)";
     dish5.ingredients = "filete de ternera 250gr, queso y reduccion de vino";
     dish6.ingredients = "salmón salpimentado y salsa de limón ";
     dish7.ingredients =
@@ -102,6 +102,11 @@ class ManagerController {
     allergen4.description =
       "mariscos como langostinos, cangrejos y almejas pueden causar alergias alimentarias";
 
+    this[MODEL].assignAllergenToDish(allergen1, dish1, dish7, dish10, dish8);
+    this[MODEL].assignAllergenToDish(allergen2, dish3, dish4, dish9, dish8);
+    this[MODEL].assignAllergenToDish(allergen3, dish7, dish10, dish12, dish11);
+    this[MODEL].assignAllergenToDish(allergen4, dish6, dish3, dish4, dish7);
+
     const menu1 = this[MODEL].createMenu("Menú del día");
     const menu2 = this[MODEL].createMenu("Menú infantil");
     const menu3 = this[MODEL].createMenu("Menú gourmet");
@@ -127,17 +132,17 @@ class ManagerController {
     const restaurant2 = this[MODEL].createRestaurant("La cochera");
     const restaurant3 = this[MODEL].createRestaurant("Los brezos");
 
-    const coordinate1 = new Coordinate(245, 512);
+    const coordinate1 = new Coordinate("40.7128° N", "74.0060° W");
     restaurant1.setLocation(
       coordinate1.getLatitude(),
       coordinate1.getLongitude()
     );
-    const coordinate2 = new Coordinate(666, 333);
+    const coordinate2 = new Coordinate(" -33.8688° S", " 151.2093° E");
     restaurant2.setLocation(
       coordinate2.getLatitude(),
       coordinate2.getLongitude()
     );
-    const coordinate3 = new Coordinate(101, 110);
+    const coordinate3 = new Coordinate("51.5074° N", "0.1278° W");
     restaurant3.setLocation(
       coordinate3.getLatitude(),
       coordinate3.getLongitude()
@@ -154,6 +159,9 @@ class ManagerController {
   onLoad = () => {
     this[LOAD_MANAGER_OBJECTS]();
     this.onAddCategory();
+    this.onAddAllergen();
+    this.onAddMenu();
+    this.onAddRestaurant();
   };
 
   onInit = () => {
@@ -161,6 +169,9 @@ class ManagerController {
     this[VIEW].showDishes(this[MODEL].getRandomDishes());
     this[VIEW].bindDishCategoryList(this.handleDishCategoryList);
     this[VIEW].bindDishDetails(this.handleDishDetails);
+    this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
+    this[VIEW].bindDishMenuList(this.handleDishMenuList);
+    this[VIEW].bindRestaurant(this.handleRestaurantDetails);
   };
 
   handleInit = () => {
@@ -183,10 +194,52 @@ class ManagerController {
     this[VIEW].showDish(dish);
   };
 
+  handleRestaurantDetails = (name) => {
+    const rest = this[MODEL].createRestaurant(name);
+    this[VIEW].showRestaurant(rest);
+  };
+
+  handleDishAllergenList = (name) => {
+    const allergen = this[MODEL].createAllergen(name);
+    const AllergenIterator = this[MODEL].getDishesWithAllergen(allergen);
+    const dishes = [];
+    for (const dishName of AllergenIterator) {
+      dishes.push(this[MODEL].createDish(dishName));
+    }
+    console.log(dishes);
+    this[VIEW].listDishes(dishes, allergen.name);
+    this[VIEW].bindDishDetailsByAllergen(this.handleDishDetails);
+  };
+  handleDishMenuList = (name) => {
+    const menu = this[MODEL].createMenu(name);
+    const MenuIterator = this[MODEL].getDishesInMenu(menu.Menu.name);
+    const dishes = [];
+    for (const dishName of MenuIterator) {
+      dishes.push(this[MODEL].createDish(dishName));
+    }
+    console.log(dishes);
+    this[VIEW].listDishesInMenu(dishes, menu.Menu.name);
+    this[VIEW].bindDishDetailsByAllergen(this.handleDishDetails);
+  };
+
   onAddCategory = () => {
     this[VIEW].showCategoriesInMenu(this[MODEL].getCategories());
     this[VIEW].bindDishCategoryListInMenu(this.handleDishCategoryList);
+    this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
+    this[VIEW].bindDishMenuList(this.handleDishMenuList);
     console.log(this[MODEL]);
+  };
+
+  onAddAllergen = () => {
+    this[VIEW].showAllergensInMenu(this[MODEL].getAllergens());
+  };
+
+  onAddMenu = () => {
+    this[VIEW].showMenusInMenu(this[MODEL].getMenus());
+  };
+
+  onAddRestaurant = () => {
+    this[VIEW].showRestaurantsInMenu(this[MODEL].getRestaurants());
   };
 }
 

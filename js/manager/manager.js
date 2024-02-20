@@ -421,7 +421,7 @@ const RestaurantManager = (function () {
           this.#dishes.set(dish.name, new Dish(dish.name));
         }
 
-        const dishKey = String(dish);
+        const dishKey = dish.name; // Utiliza el nombre del plato como clave
         menuEntry.dishes[dishKey] = true; // O cualquier valor que desees
       });
 
@@ -671,6 +671,17 @@ const RestaurantManager = (function () {
 
       // Devolver un iterador para los nombres de los platos
       return dishNames[Symbol.iterator]();
+    }
+
+    // Método para obtener los platos asociados a un menú
+    getDishesInMenu(menuName) {
+      const menuEntry = this.#menus.get(menuName);
+      if (!menuEntry) {
+        throw new RestaurantManagerException(`Menu '${menuName}' not found`);
+      }
+
+      const dishNames = Object.keys(menuEntry.dishes);
+      return dishNames;
     }
 
     findDishes(filterFunction, sortingFunction) {

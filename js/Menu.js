@@ -2,7 +2,7 @@ import { MenuNameException } from "./exception.js";
 
 class Menu {
   constructor(name) {
-    if (!name || name.trim() === "") {
+    if (typeof name === "string" && name.trim() === "") {
       throw new MenuNameException();
     }
     this.name = name;
@@ -23,7 +23,7 @@ class Menu {
     this.description = desc;
   }
   toString() {
-    return `Category: ${this.name}` + " "`Description: ${this.description}`;
+    return `Category: ${this.name}` + `Description: ${this.description}`;
   }
 }
 

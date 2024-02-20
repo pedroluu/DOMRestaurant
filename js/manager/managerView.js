@@ -24,6 +24,43 @@ class ManagerView {
       });
     }
   }
+
+  bindDishAllergenList(handler) {
+    const navAller = document.getElementById("navAller");
+    if (navAller && navAller.nextSibling) {
+      const links = navAller.nextSibling.querySelectorAll("a");
+      for (const link of links) {
+        link.addEventListener("click", (event) => {
+          handler(event.currentTarget.dataset.allergen);
+        });
+      }
+    }
+  }
+
+  bindDishMenuList(handler) {
+    const navMenu = document.getElementById("navMenu");
+    if (navMenu && navMenu.nextSibling) {
+      const links = navMenu.nextSibling.querySelectorAll("a");
+      for (const link of links) {
+        link.addEventListener("click", (event) => {
+          handler(event.currentTarget.dataset.menu);
+        });
+      }
+    }
+  }
+
+  bindRestaurant(handler) {
+    const navRest = document.getElementById("navRest");
+    if (navRest && navRest.nextSibling) {
+      const links = navRest.nextSibling.querySelectorAll("a");
+      for (const link of links) {
+        link.addEventListener("click", (event) => {
+          handler(event.currentTarget.dataset.rest);
+        });
+      }
+    }
+  }
+
   bindDishCategoryListInMenu(handler) {
     const navCats = document.getElementById("navCats");
     const links = navCats.nextSibling.querySelectorAll("a");
@@ -46,6 +83,16 @@ class ManagerView {
   }
 
   bindDishDetailsByCategory(handler) {
+    const dishDetails = document.getElementById("dishes-list-category");
+    const links = dishDetails.querySelectorAll("a");
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
+      });
+    }
+  }
+
+  bindDishDetailsByAllergen(handler) {
     const dishDetails = document.getElementById("dishes-list-category");
     const links = dishDetails.querySelectorAll("a");
     for (const link of links) {
@@ -113,7 +160,6 @@ class ManagerView {
                     </div>
                     <div class="dish-list-text text-white">
                         <h3>${dish.Dish.name}</h3>
-                        <div>${dish.Dish.description}</div>
                     </div>
                 </a>
             </div>
@@ -154,6 +200,39 @@ class ManagerView {
     this.ficha.append(container);
   }
 
+  showRestaurant(restaurant) {
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.id = "category-list";
+    container.classList.add("row");
+    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
+    container.style.display = "flex";
+    container.style.justifyContent = "center";
+    container.style.marginLeft = "18%";
+    container.style.marginTop = "5%";
+    container.insertAdjacentHTML(
+      "beforeend",
+      `
+          <div class="col-lg-3 col-md-6 bg-dark text-center">
+              <a data-category="${restaurant.Restaurant.name}" href="#product-list" class="text-decoration-none">
+                  <div class="cat-list-image">
+                      <img alt="${restaurant.Restaurant.name}" src="./img/${restaurant.Restaurant.name}.jpg" />
+                  </div>
+                  <div class="cat-list-text text-white">
+                      <h3>${restaurant.Restaurant.name}</h3>
+                      <div>${restaurant.Restaurant.description}</div>
+                      <div>${restaurant.Restaurant.location}</div>
+                  </div>
+              </a>
+          </div>
+      `
+    );
+
+    this.categories.append(container);
+  }
+
   showCategoriesInMenu(categories) {
     const li = document.createElement("li");
     li.classList.add("nav-item");
@@ -180,6 +259,83 @@ class ManagerView {
     this.menu.append(li);
   }
 
+  showRestaurantsInMenu(restaurants) {
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle"
+      href="#" id="navRest" role="button"
+      data-bs-toggle="dropdown" aria-expanded="false"
+      style="text-decoration: none;color: #ffffff;
+      font-weight: bold;
+      transition: color 0.3s;">Restaurantes</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+    container.style.backgroundColor = "black";
+    for (const restaurant of restaurants) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-rest="${restaurant.Restaurant.name}" class="dropdown-item" href="#categories">${restaurant.Restaurant.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+
+  showAllergensInMenu(allergens) {
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle"
+      href="#" id="navAller" role="button"
+      data-bs-toggle="dropdown" aria-expanded="false"
+      style="text-decoration: none;color: #ffffff;
+      font-weight: bold;
+      transition: color 0.3s;">Alérgenos</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+    container.style.backgroundColor = "black";
+    for (const allergen of allergens) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#allergens">${allergen.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+  showMenusInMenu(menus) {
+    const li = document.createElement("li");
+    li.classList.add("nav-item");
+    li.classList.add("dropdown");
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle"
+      href="#" id="navMenu" role="button"
+      data-bs-toggle="dropdown" aria-expanded="false"
+      style="text-decoration: none;color: #ffffff;
+      font-weight: bold;
+      transition: color 0.3s;">Menu</a>`
+    );
+    const container = document.createElement("ul");
+    container.classList.add("dropdown-menu");
+    container.style.backgroundColor = "black";
+    for (const menu of menus) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<li><a data-menu="${menu.Menu.name}" class="dropdown-item" href="#menus">${menu.Menu.name}</a></li>`
+      );
+    }
+    li.append(container);
+    this.menu.append(li);
+  }
+
   listDishes(dishes, name) {
     console.log(dishes);
     this.categories.replaceChildren();
@@ -189,11 +345,13 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "dishes-list-category";
     container.classList.add("row");
-    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
+    container.style.Width = "70%"; // Ancho máximo del contenedor
     container.style.marginTop = "5%";
     container.style.marginBottom = "5%";
-    container.style.marginLeft = "18%"; // Margen izquierdo automático
-    container.style.marginRight = "auto"; // Margen derecho automático
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<h1 class="text-center text-white">${name}</h1>`
+    );
 
     for (const dish of dishes) {
       container.insertAdjacentHTML(
@@ -206,7 +364,44 @@ class ManagerView {
                     </div>
                     <div class="dish-list-text text-white">
                         <h3>${dish.Dish.name}</h3>
-                        <div>${dish.Dish.description}</div>
+                    </div>
+                </a>
+            </div>
+        `
+      );
+    }
+    container.insertAdjacentHTML("afterbegin", `<h1>${name}</h1>`);
+    this.categories.append(container);
+  }
+
+  listDishesInMenu(dishes, name) {
+    console.log(dishes);
+    this.categories.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.id = "dishes-list-category";
+    container.classList.add("row");
+    container.style.Width = "70%"; // Ancho máximo del contenedor
+    container.style.marginTop = "5%";
+    container.style.marginBottom = "5%";
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<h1 class="text-center text-white">${name}</h1>`
+    );
+
+    for (const dish of dishes) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+            <div class="col  bg-dark text-center">
+                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                    <div class="dish-list-image">
+                        <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
+                    </div>
+                    <div class="dish-list-text text-white">
+                        <h3>${dish.Dish.name}</h3>
                     </div>
                 </a>
             </div>

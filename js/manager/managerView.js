@@ -120,7 +120,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a data-category="${category.name}" href="#product-list" class="text-decoration-none">
+                <a data-category="${category.name}" href="#categories" class="text-decoration-none">
                     <div class="cat-list-image">
                         <img alt="${category.name}" src="./img/${category.name}.jpg" />
                     </div>
@@ -216,7 +216,7 @@ class ManagerView {
       "beforeend",
       `
           <div class="col-lg-3 col-md-6 bg-dark text-center">
-              <a data-category="${restaurant.Restaurant.name}" href="#product-list" class="text-decoration-none">
+              <a data-category="${restaurant.Restaurant.name}" href="#categories" class="text-decoration-none">
                   <div class="cat-list-image">
                       <img alt="${restaurant.Restaurant.name}" src="./img/${restaurant.Restaurant.name}.jpg" />
                   </div>
@@ -304,7 +304,7 @@ class ManagerView {
     for (const allergen of allergens) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#allergens">${allergen.name}</a></li>`
+        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#categories">${allergen.name}</a></li>`
       );
     }
     li.append(container);
@@ -329,7 +329,7 @@ class ManagerView {
     for (const menu of menus) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-menu="${menu.Menu.name}" class="dropdown-item" href="#menus">${menu.Menu.name}</a></li>`
+        `<li><a data-menu="${menu.Menu.name}" class="dropdown-item" href="#categories">${menu.Menu.name}</a></li>`
       );
     }
     li.append(container);

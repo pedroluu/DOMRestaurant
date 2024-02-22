@@ -1,3 +1,5 @@
+const EXCECUTE_HANDLER = Symbol("excecuteHandler");
+
 class ManagerView {
   constructor() {
     this.categories = document.getElementById("categories");
@@ -6,12 +8,41 @@ class ManagerView {
     this.ficha = document.getElementById("ficha-elemento");
   }
 
+  [EXCECUTE_HANDLER](
+    handler,
+    handlerArguments,
+    scrollElement,
+    data,
+    url,
+    event
+  ) {
+    handler(...handlerArguments);
+    const scroll = document.querySelector(scrollElement);
+    if (scroll) scroll.scrollIntoView();
+    history.pushState(data, null, url);
+    event.preventDefault();
+  }
+
   bindInit(handler) {
     document.getElementById("init").addEventListener("click", (event) => {
-      handler();
+      this[EXCECUTE_HANDLER](
+        handler,
+        [],
+        "body",
+        { action: "init" },
+        "#",
+        event
+      );
     });
     document.getElementById("logo").addEventListener("click", (event) => {
-      handler();
+      this[EXCECUTE_HANDLER](
+        handler,
+        [],
+        "body",
+        { action: "init" },
+        "#",
+        event
+      );
     });
   }
 
@@ -109,11 +140,6 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "category-list";
     container.classList.add("row");
-    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
-    container.style.marginTop = "5%";
-    container.style.marginBottom = "5%";
-    container.style.marginLeft = "25%"; // Margen izquierdo automático
-    container.style.marginRight = "auto"; // Margen derecho automático
 
     for (const category of categories) {
       container.insertAdjacentHTML(
@@ -143,11 +169,10 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "dishes-list";
     container.classList.add("row");
-    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
-    container.style.marginTop = "5%";
-    container.style.marginBottom = "5%";
-    container.style.marginLeft = "25%"; // Margen izquierdo automático
-    container.style.marginRight = "auto"; // Margen derecho automático
+    container.insertAdjacentHTML(
+      "afterbegin",
+      `<h3 class="text-center text-white">Algunos de nuestros exquisitos platos</h3>`
+    );
 
     for (const dish of dishes) {
       container.insertAdjacentHTML(
@@ -176,20 +201,18 @@ class ManagerView {
 
     const container = document.createElement("div");
     container.id = "dish-details";
-    container.style.display = "flex";
-    container.style.justifyContent = "space-around";
 
     container.insertAdjacentHTML(
       "beforeend",
       `
           <div class="col col-md-6 bg-dark text-center justify-content-center">
+          <h3 class="text-center text-white col">Nuestro ${dish.Dish.name}</h3>
               <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                   <div class="dish-list-image">
                       <img alt="${dish.name}" src="${dish.Dish.image}" />
                   </div>
                   <div class="dish-list-text text-white">
-                      <h3>${dish.Dish.name}</h3>
-                      <div>Descripción: ${dish.Dish.description}</div>
+                      <div>Descripción: ${dish.Dish.description}</div><br>
                       <div>Ingredientes: ${dish.Dish.ingredients}</div>
                   </div>
               </a>
@@ -207,21 +230,16 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "category-list";
     container.classList.add("row");
-    container.style.maxWidth = "1200px"; // Ancho máximo del contenedor
-    container.style.display = "flex";
-    container.style.justifyContent = "center";
-    container.style.marginLeft = "18%";
-    container.style.marginTop = "5%";
     container.insertAdjacentHTML(
       "beforeend",
       `
           <div class="col-lg-3 col-md-6 bg-dark text-center">
+          <h2 class="text-white">${restaurant.Restaurant.name}</h2>
               <a data-category="${restaurant.Restaurant.name}" href="#categories" class="text-decoration-none">
                   <div class="cat-list-image">
                       <img alt="${restaurant.Restaurant.name}" src="./img/${restaurant.Restaurant.name}.jpg" />
                   </div>
                   <div class="cat-list-text text-white">
-                      <h3>${restaurant.Restaurant.name}</h3>
                       <div>${restaurant.Restaurant.description}</div>
                       <div>${restaurant.Restaurant.location}</div>
                   </div>
@@ -345,9 +363,6 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "dishes-list-category";
     container.classList.add("row");
-    container.style.Width = "70%"; // Ancho máximo del contenedor
-    container.style.marginTop = "5%";
-    container.style.marginBottom = "5%";
     container.insertAdjacentHTML(
       "beforeend",
       `<h1 class="text-center text-white">${name}</h1>`
@@ -383,9 +398,6 @@ class ManagerView {
     const container = document.createElement("div");
     container.id = "dishes-list-category";
     container.classList.add("row");
-    container.style.Width = "70%"; // Ancho máximo del contenedor
-    container.style.marginTop = "5%";
-    container.style.marginBottom = "5%";
     container.insertAdjacentHTML(
       "beforeend",
       `<h1 class="text-center text-white">${name}</h1>`

@@ -130,7 +130,7 @@ class ManagerView {
             [rest],
             "#restaurant-list",
             { action: "restaurantInMenu", rest },
-            "#category-list",
+            "#dishes-category-list",
             event
           );
         });

@@ -162,6 +162,7 @@ class ManagerController {
     this.onAddAllergen();
     this.onAddMenu();
     this.onAddRestaurant();
+    this.onCloseWindow();
   };
 
   onInit = () => {
@@ -192,6 +193,7 @@ class ManagerController {
   handleDishDetails = (name) => {
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDish(dish);
+    this[VIEW].bindShowDishInNewWindow(this.handleDishInNewWindow);
   };
 
   handleRestaurantDetails = (name) => {
@@ -219,7 +221,25 @@ class ManagerController {
     }
     console.log(dishes);
     this[VIEW].listDishesInMenu(dishes, menu.Menu.name);
-    this[VIEW].bindDishDetailsByAllergen(this.handleDishDetails);
+    this[VIEW].bindDishDetailsByMenu(this.handleDishDetails);
+  };
+
+  handleDishInNewWindow = (name, newWindow) => {
+    try {
+      const dish = this[MODEL].createDish(name);
+      this[VIEW].showDishInNewWindow(dish.Dish, newWindow);
+    } catch (error) {
+      this[VIEW].showDishInNewWindow(
+        null,
+        newWindow,
+        "Actualmente no tenemos este plato en nuestro sistema."
+      );
+    }
+  };
+
+  handleCloseWindowInMenu = (dish, window) => {
+    window.close();
+    this[VIEW].dishWindow.delete(dish);
   };
 
   onAddCategory = () => {
@@ -240,6 +260,11 @@ class ManagerController {
 
   onAddRestaurant = () => {
     this[VIEW].showRestaurantsInMenu(this[MODEL].getRestaurants());
+  };
+
+  onCloseWindow = () => {
+    this[VIEW].showWindowCloseInMenu();
+    this[VIEW].bindCloseWindowInMenu(this.handleCloseWindowInMenu);
   };
 }
 

@@ -139,9 +139,19 @@ body {
   border-radius: 15px;
 }
 
-.foot {
-  text-align: center;
-  padding: 20px 0;
-  background-color: #343a40;
-  color: #ffffff;
+#b-open {
+  margin-top: 20px;
+  border-color: #ff6b6b;
+  background-color: #ff6b6b;
+}
+
+#restaurant-list {
+  max-width: "1200px";
+  display: flex;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+#restaurant-list img {
+  border-radius: 15px;
 }

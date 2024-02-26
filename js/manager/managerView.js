@@ -1,4 +1,4 @@
-const EXCECUTE_HANDLER = Symbol("excecuteHandler");
+const EXECUTE_HANDLER = Symbol("excecuteHandler");
 
 class ManagerView {
   constructor() {
@@ -6,9 +6,10 @@ class ManagerView {
     this.dishes = document.getElementById("dishes");
     this.menu = document.querySelector(".nav");
     this.ficha = document.getElementById("ficha-elemento");
+    this.dishWindow = new Map();
   }
 
-  [EXCECUTE_HANDLER](
+  [EXECUTE_HANDLER](
     handler,
     handlerArguments,
     scrollElement,
@@ -25,7 +26,7 @@ class ManagerView {
 
   bindInit(handler) {
     document.getElementById("init").addEventListener("click", (event) => {
-      this[EXCECUTE_HANDLER](
+      this[EXECUTE_HANDLER](
         handler,
         [],
         "body",
@@ -35,7 +36,7 @@ class ManagerView {
       );
     });
     document.getElementById("logo").addEventListener("click", (event) => {
-      this[EXCECUTE_HANDLER](
+      this[EXECUTE_HANDLER](
         handler,
         [],
         "body",
@@ -51,7 +52,15 @@ class ManagerView {
     const links = categoryList.querySelectorAll("a");
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.category);
+        const { category } = event.currentTarget.dataset;
+        this[EXECUTE_HANDLER](
+          handler,
+          [category],
+          "#dishes-list-category",
+          { action: "dishCategoryList", category },
+          "#category-list",
+          event
+        );
       });
     }
   }
@@ -60,9 +69,20 @@ class ManagerView {
     const navAller = document.getElementById("navAller");
     if (navAller && navAller.nextSibling) {
       const links = navAller.nextSibling.querySelectorAll("a");
+      // y obtenemos el valor de nuestra alergenos
       for (const link of links) {
         link.addEventListener("click", (event) => {
-          handler(event.currentTarget.dataset.allergen);
+          // Obtenemos el alergeno
+          const { allergen } = event.currentTarget.dataset;
+          // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+          this[EXECUTE_HANDLER](
+            handler,
+            [allergen],
+            "#dishes-list-category",
+            { action: "dishAllergenList", allergen },
+            "#category-list",
+            event
+          );
         });
       }
     }
@@ -72,9 +92,22 @@ class ManagerView {
     const navMenu = document.getElementById("navMenu");
     if (navMenu && navMenu.nextSibling) {
       const links = navMenu.nextSibling.querySelectorAll("a");
+      // Recorremos los links que hemos recogido
+      // y obtenemos el valor de nuestros menus
       for (const link of links) {
         link.addEventListener("click", (event) => {
-          handler(event.currentTarget.dataset.menu);
+          // Obtenemos los menus
+          const { menu } = event.currentTarget.dataset;
+
+          // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+          this[EXECUTE_HANDLER](
+            handler,
+            [menu],
+            "#dishes-category-list",
+            { action: "dishMenuList", menu },
+            "#category-list",
+            event
+          );
         });
       }
     }
@@ -84,9 +117,22 @@ class ManagerView {
     const navRest = document.getElementById("navRest");
     if (navRest && navRest.nextSibling) {
       const links = navRest.nextSibling.querySelectorAll("a");
+      // Recorremos los links que hemos recogido
+      // y obtenemos el valor de nuestros menus
       for (const link of links) {
         link.addEventListener("click", (event) => {
-          handler(event.currentTarget.dataset.rest);
+          // Obtenemos el objeto de restaurante
+          const { rest } = event.currentTarget.dataset;
+
+          // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+          this[EXECUTE_HANDLER](
+            handler,
+            [rest],
+            "#restaurant-list",
+            { action: "restaurantInMenu", rest },
+            "#category-list",
+            event
+          );
         });
       }
     }
@@ -95,9 +141,24 @@ class ManagerView {
   bindDishCategoryListInMenu(handler) {
     const navCats = document.getElementById("navCats");
     const links = navCats.nextSibling.querySelectorAll("a");
+
+    // Recorremos los links que hemos recogido
+    // y obtenemos el valor de nuestra categoria
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.dataset.category);
+        // Obtenemos nuestra categoria
+        const { category } = event.currentTarget.dataset;
+        console.log(event.currentTarget.dataset);
+
+        // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+        this[EXECUTE_HANDLER](
+          handler,
+          [category],
+          "#dishes-category-list",
+          { action: "dishCategoryList", category },
+          "#category-list",
+          event
+        );
       });
     }
   }
@@ -105,10 +166,21 @@ class ManagerView {
   bindDishDetails(handler) {
     const dishDetails = document.getElementById("dishes-list");
     const links = dishDetails.querySelectorAll("a");
+    // Recorremos los links
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        console.log(event.currentTarget);
-        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
+        // Obtenemos los platos que se han generado anteriormente
+        const { dish } = event.currentTarget.dataset;
+
+        // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+        this[EXECUTE_HANDLER](
+          handler,
+          [dish],
+          "#dishes-list-category",
+          { action: "randomDishes", dish },
+          "#dish-details",
+          event
+        );
       });
     }
   }
@@ -116,9 +188,22 @@ class ManagerView {
   bindDishDetailsByCategory(handler) {
     const dishDetails = document.getElementById("dishes-list-category");
     const links = dishDetails.querySelectorAll("a");
+    // Recorremos los links que hemos recogido
+    // y obtenemos el valor de nuestra categoria
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
+        // Obtenemos nuestra categoria
+        const { dish } = event.currentTarget.dataset;
+
+        // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+        this[EXECUTE_HANDLER](
+          handler,
+          [dish],
+          "#dish-list",
+          { action: "dishCategoryList", dish },
+          "#dish-list",
+          event
+        );
       });
     }
   }
@@ -126,11 +211,97 @@ class ManagerView {
   bindDishDetailsByAllergen(handler) {
     const dishDetails = document.getElementById("dishes-list-category");
     const links = dishDetails.querySelectorAll("a");
+
+    // Recorremos los links que hemos recogido
+    // y obtenemos el valor de nuestra categoria
     for (const link of links) {
       link.addEventListener("click", (event) => {
-        handler(event.currentTarget.getAttribute("dish-category")); // Utilizar getAttribute
+        // Obtenemos nuestra categoria
+        const { dish } = event.currentTarget.dataset;
+
+        // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+        this[EXECUTE_HANDLER](
+          handler,
+          [dish],
+          "#dish-list",
+          { action: "dishAllergenList", dish },
+          "#dish-list",
+          event
+        );
       });
     }
+  }
+  bindDishDetailsByMenu(handler) {
+    const dishDetails = document.getElementById("dishes-list-category");
+    const links = dishDetails.querySelectorAll("a");
+
+    // Recorremos los links que hemos recogido
+    // y obtenemos el valor de nuestra categoria
+    for (const link of links) {
+      link.addEventListener("click", (event) => {
+        // Obtenemos nuestra categoria
+        const { dish } = event.currentTarget.dataset;
+
+        // Llamamos a nuestro metodo execute handler que declaramos anteriormente
+        this[EXECUTE_HANDLER](
+          handler,
+          [dish],
+          "#dish-list",
+          { action: "dishAllergenList", dish },
+          "#dish-list",
+          event
+        );
+      });
+    }
+  }
+
+  bindShowDishInNewWindow(handler) {
+    const dishOpen = document.getElementById("b-open");
+
+    dishOpen.addEventListener("click", (event) => {
+      const dishName = event.currentTarget.dataset.dish;
+
+      // Comprobamos si ya existe una ventana abierta para este plato
+      let storedWindow = this.dishWindow.get(dishName);
+
+      // Si la ventana ya está abierta, la enfocamos
+      if (storedWindow && !storedWindow.closed) {
+        storedWindow.focus();
+      } else {
+        // Si la ventana no está abierta, la creamos y la almacenamos
+        const windowName = "DishWindow_" + dishName;
+        const newWindow = window.open(
+          "dish.html",
+          windowName,
+          "width=1400, height=1000, top=250, left=250, titlebar=yes, toolbar=no, menubar=no, location=no"
+        );
+
+        // Almacenamos la nueva ventana en el mapa
+        this.dishWindow.set(dishName, newWindow);
+
+        // Agregamos un evento cuando la ventana se cargue
+        newWindow.addEventListener("load", () => {
+          handler(dishName, newWindow);
+        });
+      }
+    });
+  }
+
+  // Manejador para el elemento que tenemos en nuestro
+  // nav para cerrar todas las ventanas
+  bindCloseWindowInMenu(handler) {
+    // Obtenemos el elemento
+    const closeWindow = document.getElementById("closeWindow");
+    // Creamos el evento para cuando hagamos click
+    closeWindow.addEventListener("click", (event) => {
+      // Recorremos nuestro mapa y le pasamos a nuestro handler
+      // el nombre de los platos que tenemos abiertos y las ventanas para cerrarlas
+      // key nombre plato
+      // value la ventana
+      for (const [key, value] of this.dishWindow) {
+        handler(key, value);
+      }
+    });
   }
 
   showCategories(categories) {
@@ -146,7 +317,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a data-category="${category.name}" href="#categories" class="text-decoration-none">
+                <a data-category="${category.name}" href="#category-list  " class="text-decoration-none">
                     <div class="cat-list-image">
                         <img alt="${category.name}" src="./img/${category.name}.jpg" />
                     </div>
@@ -179,7 +350,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                <a data-dish="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                     <div class="dish-list-image">
                         <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                     </div>
@@ -207,13 +378,14 @@ class ManagerView {
       `
           <div class="col col-md-6 bg-dark text-center justify-content-center">
           <h3 class="text-center text-white col">Nuestro ${dish.Dish.name}</h3>
-              <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+              <a data-dish="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                   <div class="dish-list-image">
-                      <img alt="${dish.name}" src="${dish.Dish.image}" />
+                      <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                   </div>
                   <div class="dish-list-text text-white">
                       <div>Descripción: ${dish.Dish.description}</div><br>
-                      <div>Ingredientes: ${dish.Dish.ingredients}</div>
+                      <div>Ingredientes: ${dish.Dish.ingredients}</div> 
+                      <button id="b-open" data-dish="${dish.Dish.name}" class="btn btn-primary text-uppercase mr-2 px-4">Abrir en nueva ventana</button>
                   </div>
               </a>
           </div>
@@ -228,14 +400,14 @@ class ManagerView {
       this.categories.children[0].remove();
 
     const container = document.createElement("div");
-    container.id = "category-list";
+    container.id = "restaurant-list";
     container.classList.add("row");
     container.insertAdjacentHTML(
       "beforeend",
       `
           <div class="col-lg-3 col-md-6 bg-dark text-center">
           <h2 class="text-white">${restaurant.Restaurant.name}</h2>
-              <a data-category="${restaurant.Restaurant.name}" href="#categories" class="text-decoration-none">
+              <a data-category="${restaurant.Restaurant.name}" href="#restaurant-list" class="text-decoration-none">
                   <div class="cat-list-image">
                       <img alt="${restaurant.Restaurant.name}" src="./img/${restaurant.Restaurant.name}.jpg" />
                   </div>
@@ -270,7 +442,7 @@ class ManagerView {
     for (const category of categories) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-category="${category.name}" class="dropdown-item" href="#categories">${category.name}</a></li>`
+        `<li><a data-category="${category.name}" class="dropdown-item" href="#category-list">${category.name}</a></li>`
       );
     }
     li.append(container);
@@ -296,7 +468,7 @@ class ManagerView {
     for (const restaurant of restaurants) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-rest="${restaurant.Restaurant.name}" class="dropdown-item" href="#categories">${restaurant.Restaurant.name}</a></li>`
+        `<li><a data-rest="${restaurant.Restaurant.name}" class="dropdown-item" href="#restaurant-list">${restaurant.Restaurant.name}</a></li>`
       );
     }
     li.append(container);
@@ -322,7 +494,7 @@ class ManagerView {
     for (const allergen of allergens) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#categories">${allergen.name}</a></li>`
+        `<li><a data-allergen="${allergen.name}" class="dropdown-item" href="#allergen-list">${allergen.name}</a></li>`
       );
     }
     li.append(container);
@@ -347,7 +519,7 @@ class ManagerView {
     for (const menu of menus) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-menu="${menu.Menu.name}" class="dropdown-item" href="#categories">${menu.Menu.name}</a></li>`
+        `<li><a data-menu="${menu.Menu.name}" class="dropdown-item" href="#menu-list">${menu.Menu.name}</a></li>`
       );
     }
     li.append(container);
@@ -355,7 +527,6 @@ class ManagerView {
   }
 
   listDishes(dishes, name) {
-    console.log(dishes);
     this.categories.replaceChildren();
     if (this.categories.children.length > 0)
       this.categories.children[0].remove();
@@ -373,7 +544,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col-lg-3 col-md-6 bg-dark text-center">
-                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                <a data-dish="${dish.Dish.name}" href="#dish-details" class="text-decoration-none">
                     <div class="dish-list-image">
                         <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                     </div>
@@ -390,7 +561,6 @@ class ManagerView {
   }
 
   listDishesInMenu(dishes, name) {
-    console.log(dishes);
     this.categories.replaceChildren();
     if (this.categories.children.length > 0)
       this.categories.children[0].remove();
@@ -408,7 +578,7 @@ class ManagerView {
         "beforeend",
         `
             <div class="col  bg-dark text-center">
-                <a dish-category="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                <a data-dish="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
                     <div class="dish-list-image">
                         <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
                     </div>
@@ -422,6 +592,66 @@ class ManagerView {
     }
     container.insertAdjacentHTML("afterbegin", `<h1>${name}</h1>`);
     this.categories.append(container);
+  }
+
+  showDishInNewWindow(dish, dishWindow, message) {
+    const main = dishWindow.document.querySelector("main");
+    main.replaceChildren();
+    let container;
+
+    if (dish) {
+      dishWindow.document.title = `${dish.name}`;
+
+      container = document.createElement("div");
+      container.id = "dish-details";
+
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+          <div class="col col-md-6 bg-dark text-center justify-content-center">
+          <h3 class="text-center text-white col">Nuestro ${dish.name}</h3>
+              <a data-dish="${dish.name}" href="#dish-list" class="text-decoration-none">
+                  <div class="dish-list-image">
+                      <img alt="${dish.name}" src="${dish.image}" />
+                  </div>
+                  <div class="dish-list-text text-white">
+                      <div>Descripción: ${dish.description}</div><br>
+                      <div>Ingredientes: ${dish.ingredients}</div> 
+                      <button id="b-open" data-serial="${dish.name}" class="btn btn-primary text-uppercase mr-2 px-4">Cerrar ventana</button>
+                  </div>
+              </a>
+          </div>
+      `
+      );
+      main.append(container);
+    } else {
+      // Definimos el elemento de neustro contenedor
+      container = document.createElement("div");
+      container.classList.add("container", "mt-5", "mb-5");
+      // Insertamos el html
+      container.insertAdjacentHTML(
+        "beforeend",
+        `<div class="row d-flex text-black justify-content-center"> ${message}</div>`
+      );
+    }
+    main.append(container);
+    dishWindow.document.body.scrollIntoView();
+  }
+
+  // Metodo para mostrar el elemento
+  // de cerrar ventanas en nuestro nav
+  showWindowCloseInMenu() {
+    // Creamos el elemento de nuestro nav
+    const li = document.createElement("li");
+    // Definimos las class de nuestro li
+    li.classList.add("nav_li");
+    // Insertamos el contenido de nuestro li
+    li.insertAdjacentHTML(
+      "beforeend",
+      `<a id="closeWindow"  class="text-decoration-none" href="#">Cerrar ventanas</a>`
+    );
+    // Lo insertamos en el menu
+    this.menu.append(li);
   }
 }
 

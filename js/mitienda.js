@@ -12,6 +12,7 @@ const historyActions = {
   restaurantInMenu: (event) =>
     ManagerApp.handleRestaurantDetails(event.state.rest),
   randomDishes: (event) => ManagerApp.handleDishDetails(event.state.dish),
+  newCategory: () => ManagerApp.handleNewCategoryForm(),
 };
 
 window.addEventListener("popstate", (event) => {

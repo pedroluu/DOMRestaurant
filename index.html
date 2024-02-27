@@ -23,6 +23,12 @@
                 <ul class="nav">
                     <li><a id="init" href="#">Inicio</a></li>
                     <li><a href="#">Contacto</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle show" href="#" id="navCats" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="true">Categorías</a>
+                        <ul class="dropdown-menu bg-dark" data-bs-popper="static">
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -35,12 +41,15 @@
 
     <div id="categories"></div>
 
+    <main>
+    </main>
     <div id="dishes"></div>
-
 
     <!-- Contenedor de ficha de elemento individual -->
     <div id="ficha-elemento" class="container oculto">
     </div>
+
+
 
 
     <footer class="bg-dark text-light py-4">
@@ -76,6 +85,25 @@
             </div>
         </div>
     </footer>
+
+    <!-- Modales -->
+    <div class="modal fade" id="messageModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="messageModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="messageModalTitle">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

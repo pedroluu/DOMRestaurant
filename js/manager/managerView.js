@@ -1,3 +1,5 @@
+import { newCategoryValidation } from "./validation.js";
+
 // Definición de un símbolo para uso interno en la clase ManagerView
 const EXECUTE_HANDLER = Symbol("excecuteHandler");
 
@@ -7,6 +9,7 @@ class ManagerView {
   constructor() {
     // Inicialización de propiedades de la clase
     this.categories = document.getElementById("categories");
+    this.main = document.getElementsByTagName("main")[0];
     this.dishes = document.getElementById("dishes");
     this.menu = document.querySelector(".nav");
     this.ficha = document.getElementById("ficha-elemento");
@@ -36,6 +39,7 @@ class ManagerView {
   bindInit(handler) {
     // Agrega un evento 'click' al elemento con id 'init'
     document.getElementById("init").addEventListener("click", (event) => {
+      this.main.replaceChildren();
       // Llama al método [EXECUTE_HANDLER] con los parámetros necesarios
       this[EXECUTE_HANDLER](
         handler,
@@ -48,6 +52,7 @@ class ManagerView {
     });
     // Agrega un evento 'click' al elemento con id 'logo'
     document.getElementById("logo").addEventListener("click", (event) => {
+      this.main.replaceChildren();
       // Llama al método [EXECUTE_HANDLER] con los parámetros necesarios
       this[EXECUTE_HANDLER](
         handler,
@@ -164,7 +169,7 @@ class ManagerView {
     // Obtiene el elemento 'navCats'
     const navCats = document.getElementById("navCats");
     // Obtiene todos los enlaces dentro del siguiente elemento al 'navCats'
-    const links = navCats.nextSibling.querySelectorAll("a");
+    const links = navCats.nextElementSibling.querySelectorAll("a");
 
     // Itera sobre los enlaces y agrega un evento 'click' a cada uno
     for (const link of links) {
@@ -332,6 +337,24 @@ class ManagerView {
     });
   }
 
+  bindAdminMenu(hNewCategory) {
+    const newCategoryLink = document.getElementById("lnewCategory");
+    newCategoryLink.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        hNewCategory,
+        [],
+        "#new-category",
+        { action: "newCategory" },
+        "#",
+        event
+      );
+    });
+  }
+
+  bindNewCategoryForm(handler) {
+    newCategoryValidation(handler);
+  }
+
   // Método para mostrar las categorías de platos
   showCategories(categories) {
     // Elimina el contenido actual de la sección de categorías si existe
@@ -474,35 +497,15 @@ class ManagerView {
 
   // Método para mostrar las categorías en el menú
   showCategoriesInMenu(categories) {
-    // Crea un elemento de lista para las categorías en el menú
-    const li = document.createElement("li");
-    li.classList.add("nav-item");
-    li.classList.add("dropdown");
-
-    // Agrega el HTML correspondiente al elemento de lista
-    li.insertAdjacentHTML(
-      "beforeend",
-      `<a class="nav-link dropdown-toggle" href="#" id="navCats" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;color: #ffffff;font-weight: bold;transition: color 0.3s;">Categorías</a>`
-    );
-
-    // Crea un contenedor ul para las categorías en el menú
-    const container = document.createElement("ul");
-    container.classList.add("dropdown-menu");
-    container.style.backgroundColor = "black";
-
-    // Agrega las categorías al contenedor
+    const navCats = document.getElementById("navCats");
+    const container = navCats.nextElementSibling;
+    container.replaceChildren();
     for (const category of categories) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-category="${category.name}" class="dropdown-item" href="#category-list">${category.name}</a></li>`
+        `<li><a datacategory="${category.name}" class="dropdown-item" href="#productlist">${category.name}</a></li>`
       );
     }
-
-    // Agrega el contenedor al elemento de lista
-    li.append(container);
-
-    // Agrega el elemento de lista al menú
-    this.menu.append(li);
   }
 
   // Método para mostrar los restaurantes en el menú
@@ -759,6 +762,126 @@ class ManagerView {
 
     // Agrega el elemento de lista al menú
     this.menu.append(li);
+  }
+
+  showAdminMenu() {
+    const menuOption = document.createElement("li");
+    menuOption.classList.add("nav-item");
+    menuOption.classList.add("dropdown");
+
+    menuOption.insertAdjacentHTML(
+      "beforeend",
+      `<a class="nav-link dropdown-toggle"
+      href="#" id="navMenu" role="button"
+      data-bs-toggle="dropdown" aria-expanded="false"
+      style="text-decoration: none;color: #ffffff;
+      font-weight: bold;
+      transition: color 0.3s;">Administración</a>`
+    );
+
+    const suboptions = document.createElement("ul");
+    suboptions.classList.add("dropdown-menu");
+    suboptions.classList.add("bg-dark");
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lnewDish" class="dropdown-item" href="#new-dish">Crear plato</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="ldelDish" class="dropdown-item" href="#del-dish">Eliminar plato</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lnewCategory" class="dropdown-item" href="#new-category">Crear categoría</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="ldelCategory" class="dropdown-item" href="#del-categoría">Eliminar categoría</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lnewRestaurant" class="dropdown-item" href="#new-restaurant">Crear restaurante</a></li>'
+    );
+    suboptions.insertAdjacentHTML(
+      "beforeend",
+      '<li><a id="lmodCategory" class="dropdown-item" href="#mod-categoría">Modificar categoría</a></li>'
+    );
+    menuOption.append(suboptions);
+    this.menu.append(menuOption);
+  }
+
+  showNewCategoryForm() {
+    this.main.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "new-category";
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<h1 class="display-5 text-white">Nueva categoría</h1>'
+    );
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<form name="fNewCategory" role="form" class="row g-3" novalidate>
+      <div class="col-md-6 mb-3">
+        <label class="form-label" for="ncName">Nombre *</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-type"></i></span>
+         <input type="text" class="form-control" id="ncName" name="ncName" placeholder="Nombre de categoría" value="" required>
+        <div class="invalid-feedback">El nombre es obligatorio.</div>
+        <div class="valid-feedback">Correcto.</div>
+        </div>
+      </div>
+    <div class="col-md-12 mb-3">
+      <label class="form-label" for="ncDescription">Descripción</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-bodytext"></i></span>
+        <input type="text" class="form-control" id="ncDescription" name="ncDescription" value="">
+        <div class="invalid-feedback"></div>
+        <div class="valid-feedback">Correcto.</div>
+      </div>
+    </div>
+      <div class="mb-12">
+        <button class="btn btn-primary" type="submit">Enviar</button>
+        <button class="btn btn-primary" type="reset">Cancelar</button>
+      </div>
+    </form>`
+    );
+    this.main.append(container);
+  }
+
+  showNewCategoryModal(done, cat, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Nueva Categoría";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">La categoría <strong>${cat.name}</strong> ha sido creada correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> La categoría <strong>${cat.name}</strong> ya está creada.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fNewCategory.reset();
+      }
+      document.fNewCategory.ncName.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
   }
 }
 // Exporta la clase ManagerView

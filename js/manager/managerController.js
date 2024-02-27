@@ -164,8 +164,10 @@ class ManagerController {
     this.onAddAllergen();
     this.onAddMenu();
     this.onAddRestaurant();
+    this[VIEW].showAdminMenu();
     // Establece una función de manejo de eventos para cerrar ventanas
     this.onCloseWindow();
+    this[VIEW].bindAdminMenu(this.handleNewCategoryForm);
   };
 
   // Método llamado durante la inicialización de la aplicación
@@ -271,6 +273,26 @@ class ManagerController {
     // Cierra la ventana y elimina la referencia al plato de la ventana en el mapa
     window.close();
     this[VIEW].dishWindow.delete(dish);
+  };
+
+  handleNewCategoryForm = () => {
+    this[VIEW].showNewCategoryForm();
+    this[VIEW].bindNewCategoryForm(this.handleCreateCategory);
+  };
+
+  handleCreateCategory = (name, desc) => {
+    const cat = this[MODEL].createCategory(name);
+    cat.description = desc;
+    let done;
+    let error;
+    try {
+      done = true;
+      this.onAddCategory();
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showNewCategoryModal(done, cat, error);
   };
 
   // Método para agregar categorías

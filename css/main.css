@@ -36,7 +36,7 @@ body {
   padding: 0;
 }
 .container nav {
-  margin: 0 auto; /* Añadir margen automático a los lados para centrar */
+  margin: 0 auto;
 }
 
 .container nav ul li {
@@ -154,4 +154,9 @@ body {
 
 #restaurant-list img {
   border-radius: 15px;
+}
+
+.btn {
+  background-color: #ff6b6b !important;
+  border-color: #ff6b6b !important;
 }

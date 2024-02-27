@@ -155,19 +155,26 @@ class ManagerController {
     restaurant3.description =
       "Enfoque en la gastronomía local y los ingredientes frescos de temporada.";
   }
-
+  // Método llamado al cargar la aplicación
   onLoad = () => {
+    // Inicia la carga de objetos de gestión
     this[LOAD_MANAGER_OBJECTS]();
+    // Agrega funciones de manejo de eventos para agregar categorías, alérgenos, menús y restaurantes
     this.onAddCategory();
     this.onAddAllergen();
     this.onAddMenu();
     this.onAddRestaurant();
+    // Establece una función de manejo de eventos para cerrar ventanas
     this.onCloseWindow();
   };
 
+  // Método llamado durante la inicialización de la aplicación
   onInit = () => {
+    // Muestra las categorías y platos existentes en la vista
     this[VIEW].showCategories(this[MODEL].getCategories());
     this[VIEW].showDishes(this[MODEL].getRandomDishes());
+    // Establece los enlaces de eventos para listar platos por categoría, mostrar detalles de platos,
+    // listar platos por alérgeno, listar platos por menú y mostrar detalles de restaurantes
     this[VIEW].bindDishCategoryList(this.handleDishCategoryList);
     this[VIEW].bindDishDetails(this.handleDishDetails);
     this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
@@ -175,60 +182,82 @@ class ManagerController {
     this[VIEW].bindRestaurant(this.handleRestaurantDetails);
   };
 
+  // Manejador de eventos que llama al método onInit
   handleInit = () => {
     this.onInit();
   };
 
+  // Manejador de eventos para manejar la lista de platos por categoría
   handleDishCategoryList = (name) => {
+    // Crea una categoría y obtiene los platos de esa categoría
     const category = this[MODEL].createCategory(name);
     const CategoryIterator = this[MODEL].getDishesInCategory(category);
     const dishes = [];
+    // Itera sobre los platos y los agrega al array dishes
     for (const dishName of CategoryIterator) {
       dishes.push(this[MODEL].createDish(dishName));
     }
+    // Lista los platos por categoría en la vista
     this[VIEW].listDishes(dishes, category.name);
+    // Establece un enlace de evento para mostrar detalles de platos por categoría
     this[VIEW].bindDishDetailsByCategory(this.handleDishDetails);
   };
 
+  // Manejador de eventos para manejar los detalles de un plato
   handleDishDetails = (name) => {
+    // Crea un plato y muestra sus detalles en la vista
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDish(dish);
+    // Establece un enlace de evento para mostrar el plato en una nueva ventana
     this[VIEW].bindShowDishInNewWindow(this.handleDishInNewWindow);
   };
-
+  // Manejador de eventos para mostrar detalles de un restaurante
   handleRestaurantDetails = (name) => {
+    // Crea un restaurante y muestra sus detalles en la vista
     const rest = this[MODEL].createRestaurant(name);
     this[VIEW].showRestaurant(rest);
   };
 
+  // Manejador de eventos para manejar la lista de platos por alérgeno
   handleDishAllergenList = (name) => {
+    // Crea un alérgeno y obtiene los platos que contienen ese alérgeno
     const allergen = this[MODEL].createAllergen(name);
     const AllergenIterator = this[MODEL].getDishesWithAllergen(allergen);
     const dishes = [];
+    // Itera sobre los platos y los agrega al array dishes
     for (const dishName of AllergenIterator) {
       dishes.push(this[MODEL].createDish(dishName));
     }
-    console.log(dishes);
+    // Lista los platos por alérgeno en la vista
     this[VIEW].listDishes(dishes, allergen.name);
+    // Establece un enlace de evento para mostrar detalles de platos por alérgeno
     this[VIEW].bindDishDetailsByAllergen(this.handleDishDetails);
   };
+
+  // Manejador de eventos para manejar la lista de platos por menú
   handleDishMenuList = (name) => {
+    // Crea un menú y obtiene los platos que están en ese menú
     const menu = this[MODEL].createMenu(name);
     const MenuIterator = this[MODEL].getDishesInMenu(menu.Menu.name);
     const dishes = [];
+    // Itera sobre los platos y los agrega al array dishes
     for (const dishName of MenuIterator) {
       dishes.push(this[MODEL].createDish(dishName));
     }
-    console.log(dishes);
+    // Lista los platos por menú en la vista
     this[VIEW].listDishesInMenu(dishes, menu.Menu.name);
+    // Establece un enlace de evento para mostrar detalles de platos por menú
     this[VIEW].bindDishDetailsByMenu(this.handleDishDetails);
   };
 
+  // Manejador de eventos para mostrar un plato en una nueva ventana
   handleDishInNewWindow = (name, newWindow) => {
     try {
+      // Intenta crear un plato y mostrarlo en una nueva ventana
       const dish = this[MODEL].createDish(name);
       this[VIEW].showDishInNewWindow(dish.Dish, newWindow);
     } catch (error) {
+      // Si no se encuentra el plato, muestra un mensaje de error en la nueva ventana
       this[VIEW].showDishInNewWindow(
         null,
         newWindow,
@@ -237,35 +266,45 @@ class ManagerController {
     }
   };
 
+  // Manejador de eventos para cerrar una ventana abierta desde el menú
   handleCloseWindowInMenu = (dish, window) => {
+    // Cierra la ventana y elimina la referencia al plato de la ventana en el mapa
     window.close();
     this[VIEW].dishWindow.delete(dish);
   };
 
+  // Método para agregar categorías
   onAddCategory = () => {
+    // Muestra las categorías en el menú y establece enlaces de eventos para manejar las acciones relacionadas con las categorías
     this[VIEW].showCategoriesInMenu(this[MODEL].getCategories());
     this[VIEW].bindDishCategoryListInMenu(this.handleDishCategoryList);
     this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
     this[VIEW].bindDishMenuList(this.handleDishMenuList);
-    console.log(this[MODEL]);
   };
 
+  // Método para agregar alérgenos
   onAddAllergen = () => {
+    // Muestra los alérgenos en el menú
     this[VIEW].showAllergensInMenu(this[MODEL].getAllergens());
   };
 
+  // Método para agregar menús
   onAddMenu = () => {
+    // Muestra los menús en el menú
     this[VIEW].showMenusInMenu(this[MODEL].getMenus());
   };
 
+  // Método para agregar restaurantes
   onAddRestaurant = () => {
+    // Muestra los restaurantes en el menú
     this[VIEW].showRestaurantsInMenu(this[MODEL].getRestaurants());
   };
 
+  // Método para cerrar ventanas abiertas desde el menú
   onCloseWindow = () => {
+    // Muestra la opción de cerrar ventanas en el menú y establece un enlace de evento para manejar esta acción
     this[VIEW].showWindowCloseInMenu();
     this[VIEW].bindCloseWindowInMenu(this.handleCloseWindowInMenu);
   };
 }
-
 export default ManagerController;

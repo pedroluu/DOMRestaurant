@@ -1,4 +1,8 @@
-import { newCategoryValidation, newDishValidation } from "./validation.js";
+import {
+  newCategoryValidation,
+  newDishValidation,
+  newRestaurantValidation,
+} from "./validation.js";
 
 // Definición de un símbolo para uso interno en la clase ManagerView
 const EXECUTE_HANDLER = Symbol("excecuteHandler");
@@ -143,7 +147,7 @@ class ManagerView {
     const navRest = document.getElementById("navRest");
     if (navRest && navRest.nextSibling) {
       // Obtiene todos los enlaces dentro del siguiente elemento al 'navRest'
-      const links = navRest.nextSibling.querySelectorAll("a");
+      const links = navRest.nextElementSibling.querySelectorAll("a");
 
       // Itera sobre los enlaces y agrega un evento 'click' a cada uno
       for (const link of links) {
@@ -337,7 +341,13 @@ class ManagerView {
     });
   }
 
-  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm, hRemoveDishForm) {
+  bindAdminMenu(
+    hNewCategory,
+    hRemoveCategory,
+    hNewDishForm,
+    hRemoveDishForm,
+    hNewRestaurant
+  ) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
       this[EXECUTE_HANDLER](
@@ -380,6 +390,17 @@ class ManagerView {
         [],
         "#remove-dish",
         { action: "removeDish" },
+        "#",
+        event
+      );
+    });
+    const newRestaurantLink = document.getElementById("lnewRestaurant");
+    newRestaurantLink.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        hNewRestaurant,
+        [],
+        "#new-restaurant",
+        { action: "newRestaurant" },
         "#",
         event
       );
@@ -430,6 +451,10 @@ class ManagerView {
         event.preventDefault();
       });
     }
+  }
+
+  bindNewRestaurantForm(handler) {
+    newRestaurantValidation(handler);
   }
 
   // Método para mostrar las categorías de platos
@@ -587,35 +612,15 @@ class ManagerView {
 
   // Método para mostrar los restaurantes en el menú
   showRestaurantsInMenu(restaurants) {
-    // Crea un elemento de lista para los restaurantes en el menú
-    const li = document.createElement("li");
-    li.classList.add("nav-item");
-    li.classList.add("dropdown");
-
-    // Agrega el HTML correspondiente al elemento de lista
-    li.insertAdjacentHTML(
-      "beforeend",
-      `<a class="nav-link dropdown-toggle" href="#" id="navRest" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none;color: #ffffff;font-weight: bold;transition: color 0.3s;">Restaurantes</a>`
-    );
-
-    // Crea un contenedor ul para los restaurantes en el menú
-    const container = document.createElement("ul");
-    container.classList.add("dropdown-menu");
-    container.style.backgroundColor = "black";
-
-    // Agrega los restaurantes al contenedor
+    const navCats = document.getElementById("navRest");
+    const container = navRest.nextElementSibling;
+    container.replaceChildren();
     for (const restaurant of restaurants) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a data-rest="${restaurant.Restaurant.name}" class="dropdown-item" href="#restaurant-list">${restaurant.Restaurant.name}</a></li>`
+        `<li><a data-rest="${restaurant.Restaurant.name}" class="dropdown-item" href="#product-list">${restaurant.Restaurant.name}</a></li>`
       );
     }
-
-    // Agrega el contenedor al elemento de lista
-    li.append(container);
-
-    // Agrega el elemento de lista al menú
-    this.menu.append(li);
   }
 
   // Método para mostrar los alérgenos en el menú
@@ -1287,6 +1292,80 @@ class ManagerView {
         );
         button.parentElement.parentElement.parentElement.remove();
       }
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
+  }
+
+  showNewRestaurantForm() {
+    this.main.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "new-restaurant";
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<h1 class="display-5 text-white">Nuevo Restaurante</h1>'
+    );
+    container.insertAdjacentHTML(
+      "beforeend",
+      `<form name="fNewRestaurant" role="form" class="row g-3" novalidate>
+      <div class="col-md-6 mb-3">
+        <label class="form-label" for="nrName">Nombre *</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-type"></i></span>
+         <input type="text" class="form-control" id="nrName" name="nrName" placeholder="Nombre del restaurante" value="" required>
+        <div class="invalid-feedback">El nombre es obligatorio.</div>
+        <div class="valid-feedback">Correcto.</div>
+        </div>
+      </div>
+    <div class="col-md-12 mb-3">
+      <label class="form-label" for="nrDescription">Descripción</label>
+        <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-bodytext"></i></span>
+        <input type="text" class="form-control" id="nrDescription" name="nrDescription" value="">
+        <div class="invalid-feedback"></div>
+        <div class="valid-feedback">Correcto.</div>
+      </div>
+    </div>
+      <div class="mb-12">
+        <button class="btn btn-primary" type="submit">Enviar</button>
+        <button class="btn btn-primary" type="reset">Cancelar</button>
+      </div>
+    </form>`
+    );
+    this.main.append(container);
+  }
+
+  showNewRestaurantModal(done, rest, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Nuevo Restaurante";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El restaurante <strong>${rest.name}</strong> ha sido creada correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> El restaurante <strong>${rest.name}</strong> ya está creado.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fNewRestaurant.reset();
+      }
+      document.fNewRestaurant.nrName.focus();
     };
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,

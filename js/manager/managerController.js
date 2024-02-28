@@ -171,7 +171,8 @@ class ManagerController {
       this.handleNewCategoryForm,
       this.handleRemoveCategoryForm,
       this.handleNewDishForm,
-      this.handleRemoveDishForm
+      this.handleRemoveDishForm,
+      this.handleNewRestaurantForm
     );
   };
 
@@ -351,12 +352,10 @@ class ManagerController {
       categories.forEach((name) => {
         const category = this[MODEL].createCategory(name);
         this[MODEL].assignCategoryToDish(category, dish);
-        console.log("Categorias asignadas");
       });
       allergens.forEach((name) => {
         const allergen = this[MODEL].createAllergen(name);
         this[MODEL].assignAllergenToDish(allergen, dish);
-        console.log("Alérgenos asignadas");
       });
       done = true;
     } catch (exception) {
@@ -390,7 +389,6 @@ class ManagerController {
     let dish;
     try {
       dish = this[MODEL].createDish(name);
-      console.log(dish);
       this[MODEL].removeDish(dish);
       done = true;
     } catch (exception) {
@@ -398,6 +396,26 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showRemoveDishModal(done, dish, error);
+  };
+
+  handleNewRestaurantForm = () => {
+    this[VIEW].showNewRestaurantForm();
+    this[VIEW].bindNewRestaurantForm(this.handleCreateRestaurant);
+  };
+
+  handleCreateRestaurant = (name, desc) => {
+    const rest = this[MODEL].createRestaurant(name);
+    rest.description = desc;
+    let done;
+    let error;
+    try {
+      done = true;
+      this.onAddRestaurant();
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showNewRestaurantModal(done, rest, error);
   };
 
   // Método para agregar categorías

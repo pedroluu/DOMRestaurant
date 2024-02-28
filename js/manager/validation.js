@@ -176,4 +176,43 @@ function newDishValidation(handler) {
   });
 }
 
-export { newCategoryValidation, newDishValidation };
+function newRestaurantValidation(handler) {
+  const form = document.forms.fNewRestaurant;
+  form.setAttribute("novalidate", true);
+  form.addEventListener("submit", function (event) {
+    let isValid = true;
+    let firstInvalidElement = null;
+    this.nrDescription.value = this.nrDescription.value.trim();
+    showFeedBack(this.nrDescription, true);
+    if (!this.nrName.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrName, false);
+      firstInvalidElement = this.ncTitle;
+    } else {
+      showFeedBack(this.nrName, true);
+    }
+    if (!isValid) {
+      firstInvalidElement.focus();
+    } else {
+      handler(this.nrName.value, this.nrDescription.value);
+    }
+    event.preventDefault();
+    event.stopPropagation();
+  });
+  form.addEventListener("reset", function (event) {
+    for (const div of this.querySelectorAll(
+      "div.valid-feedback,div.invalid-feedback"
+    )) {
+      div.classList.remove("d-block");
+      div.classList.add("d-none");
+    }
+    for (const input of this.querySelectorAll("input")) {
+      input.classList.remove("is-valid");
+      input.classList.remove("is-invalid");
+    }
+    this.nrName.focus();
+  });
+  form.nrName.addEventListener("change", defaultCheckElement);
+}
+
+export { newCategoryValidation, newDishValidation, newRestaurantValidation };

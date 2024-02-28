@@ -337,7 +337,7 @@ class ManagerView {
     });
   }
 
-  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm) {
+  bindAdminMenu(hNewCategory, hRemoveCategory, hNewDishForm, hRemoveDishForm) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
       this[EXECUTE_HANDLER](
@@ -373,6 +373,17 @@ class ManagerView {
         event
       );
     });
+    const delDishLink = document.getElementById("ldelDish");
+    delDishLink.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        hRemoveDishForm,
+        [],
+        "#remove-dish",
+        { action: "removeDish" },
+        "#",
+        event
+      );
+    });
   }
 
   bindNewCategoryForm(handler) {
@@ -391,6 +402,34 @@ class ManagerView {
 
   bindNewDishForm(handler) {
     newDishValidation(handler);
+  }
+
+  bindRemoveDishSelects(hCategories) {
+    const rpCategories = document.getElementById("rpCategories");
+    rpCategories.addEventListener("change", (event) => {
+      this[EXECUTE_HANDLER](
+        hCategories,
+        [event.currentTarget.value],
+        "#remove-dish",
+        {
+          action: "removeDishByCategory",
+          category: event.currentTarget.value,
+        },
+        "#remove-dish",
+        event
+      );
+    });
+  }
+
+  bindRemoveDish(handler) {
+    const dishList = document.getElementById("dishes-list");
+    const buttons = dishList.querySelectorAll("a.btn");
+    for (const button of buttons) {
+      button.addEventListener("click", function (event) {
+        handler(this.dataset.serial);
+        event.preventDefault();
+      });
+    }
   }
 
   // Método para mostrar las categorías de platos
@@ -1130,6 +1169,124 @@ class ManagerView {
         document.fNewDish.reset();
       }
       document.fNewDish.npName.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
+  }
+
+  showRemoveDishForm(categories) {
+    this.main.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "remove-dish";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Eliminar un producto</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fNewDish";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="rpCategories">Categorías del producto</label>
+				<div class="input-group">
+					<label class="input-group-text" for="rpCategories"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="rpCategories" id="rpCategories">
+						<option disabled selected>Selecciona una categoría</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const rpCategories = form.querySelector("#rpCategories");
+    for (const category of categories) {
+      rpCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${category.name}">${category.name}</option>`
+      );
+    }
+
+    container.append(form);
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<div id="product-list" class="container my-3"><div class="row"></div></div>'
+    );
+
+    this.main.append(container);
+  }
+
+  showRemoveDishList(dishes) {
+    const listContainer = document.getElementById("dishes-list");
+    listContainer.replaceChildren();
+
+    let exist = false;
+    for (const dish of dishes) {
+      exist = true;
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        `<div class="col-md-4 rProduct">
+				<figure class="card card-product-grid card-lg"> <a data-serial="${dish.Dish.name}" href="#single-product" class="img-wrap text-decoration-none"><img class="${dish.Dish.name}-style" src="${dish.Dish.image}"></a>
+					<figcaption class="info-wrap">
+						<div class="row">
+							<div class="col-md-8"> <a data-serial="${dish.Dish.name}" href="#single-product" class="title">${dish.Dish.name} </a> </div>
+							<div class="col-md-4">
+								<div class="rating text-right"> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> </div>
+							</div>
+						</div>
+					</figcaption>
+					<div class="bottom-wrap"> <a href="#" data-serial="${dish.Dish.name}" class="btn btn-primary float-right"> Eliminar </a>
+					</div>
+				</figure>
+			</div>`
+      );
+    }
+    if (!exist) {
+      listContainer.insertAdjacentHTML(
+        "beforeend",
+        '<p class="text-danger"><i class="bi bi-exclamation-triangle"></i> No existen platos  para esta categoría o tipo.</p>'
+      );
+    }
+  }
+
+  showRemoveDishModal(done, dish, error) {
+    const dishList = document.getElementById("dishes-list");
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Producto eliminado";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El producto <strong>${dish.Dish.name}</strong> ha sido eliminado correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> El ${dish.Dish.name} no existe en el manager.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        const button = dishList.querySelector(
+          `a.btn[data-serial="${dish.Dish.name}"]`
+        );
+        button.parentElement.parentElement.parentElement.remove();
+      }
     };
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,

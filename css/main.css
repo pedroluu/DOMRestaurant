@@ -160,3 +160,7 @@ body {
   background-color: #ff6b6b !important;
   border-color: #ff6b6b !important;
 }
+
+#remove-dish {
+  margin-left: 15%;
+}

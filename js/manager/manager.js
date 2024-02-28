@@ -240,17 +240,17 @@ const RestaurantManager = (function () {
           throw new DishException("Dish must not be null or undefined");
         }
 
-        const dishName = String(dish);
+        const dishName = dish.Dish.getName();
 
         // Verificar si el plato existe antes de eliminarlo
-        if (!this.#dishes.has(dish.getName())) {
+        if (!this.#dishes.has(dishName)) {
           throw new DishException(
             `${dish.getName()} is either null or not registered`
           );
         }
 
         // Eliminar el plato
-        this.#dishes.delete(dish.getName());
+        this.#dishes.delete(dishName);
 
         // Desasignar los platos asociados a la categoría eliminada
         this.#menus.forEach((menuEntry) => {

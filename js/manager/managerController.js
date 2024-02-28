@@ -170,7 +170,8 @@ class ManagerController {
     this[VIEW].bindAdminMenu(
       this.handleNewCategoryForm,
       this.handleRemoveCategoryForm,
-      this.handleNewDishForm
+      this.handleNewDishForm,
+      this.handleRemoveDishForm
     );
   };
 
@@ -212,6 +213,7 @@ class ManagerController {
   // Manejador de eventos para manejar los detalles de un plato
   handleDishDetails = (name) => {
     // Crea un plato y muestra sus detalles en la vista
+    console.log(name);
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDish(dish);
     // Establece un enlace de evento para mostrar el plato en una nueva ventana
@@ -363,6 +365,39 @@ class ManagerController {
     }
 
     this[VIEW].showNewDishModal(done, dish, error);
+  };
+
+  handleRemoveDishForm = () => {
+    this[VIEW].showRemoveDishForm(this[MODEL].getCategories());
+    this[VIEW].bindRemoveDishSelects(this.handleRemoveDishListByCategory);
+  };
+
+  handleRemoveDishListByCategory = (category) => {
+    const cat = this[MODEL].createCategory(category);
+    const CategoryIterator = this[MODEL].getDishesInCategory(cat);
+    const dishes = [];
+    // Itera sobre los platos y los agrega al array dishes
+    for (const dishName of CategoryIterator) {
+      dishes.push(this[MODEL].createDish(dishName));
+    }
+    this[VIEW].showRemoveDishList(dishes);
+    this[VIEW].bindRemoveDish(this.handleRemoveDish);
+  };
+
+  handleRemoveDish = (name) => {
+    let done;
+    let error;
+    let dish;
+    try {
+      dish = this[MODEL].createDish(name);
+      console.log(dish);
+      this[MODEL].removeDish(dish);
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showRemoveDishModal(done, dish, error);
   };
 
   // Método para agregar categorías

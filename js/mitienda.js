@@ -15,6 +15,11 @@ const historyActions = {
   newCategory: () => ManagerApp.handleNewCategoryForm(),
   removeCategory: () => ManagerApp.handleRemoveCategoryForm(),
   newDish: () => ManagerApp.handleNewDishForm(),
+  removeDish: () => ManagerApp.handleRemoveDishForm(),
+  removeDishByCategory: (event) => {
+    ManagerApp.handleRemoveDishForm();
+    ManagerApp.handleRemoveDishListByCategory(event.state.category);
+  },
 };
 
 window.addEventListener("popstate", (event) => {

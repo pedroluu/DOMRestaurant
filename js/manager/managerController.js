@@ -169,7 +169,8 @@ class ManagerController {
     this.onCloseWindow();
     this[VIEW].bindAdminMenu(
       this.handleNewCategoryForm,
-      this.handleRemoveCategoryForm
+      this.handleRemoveCategoryForm,
+      this.handleNewDishForm
     );
   };
 
@@ -318,6 +319,50 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showRemoveCategoryModal(done, cat, error);
+  };
+
+  handleNewDishForm = () => {
+    this[VIEW].showNewDishForm(
+      this[MODEL].getCategories(),
+      this[MODEL].getAllergens()
+    );
+    this[VIEW].bindNewDishForm(this.handleCreateDish);
+  };
+
+  handleCreateDish = (
+    name,
+    ingredients,
+    image,
+    description,
+    categories,
+    allergens
+  ) => {
+    let done;
+    let error;
+    let dish;
+
+    try {
+      dish = this[MODEL].createDish(name);
+      dish.description = description;
+      dish.ingredients = ingredients;
+      dish.image = image;
+      categories.forEach((name) => {
+        const category = this[MODEL].createCategory(name);
+        this[MODEL].assignCategoryToDish(category, dish);
+        console.log("Categorias asignadas");
+      });
+      allergens.forEach((name) => {
+        const allergen = this[MODEL].createAllergen(name);
+        this[MODEL].assignAllergenToDish(allergen, dish);
+        console.log("Alérgenos asignadas");
+      });
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+
+    this[VIEW].showNewDishModal(done, dish, error);
   };
 
   // Método para agregar categorías

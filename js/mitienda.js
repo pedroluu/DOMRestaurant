@@ -14,6 +14,7 @@ const historyActions = {
   randomDishes: (event) => ManagerApp.handleDishDetails(event.state.dish),
   newCategory: () => ManagerApp.handleNewCategoryForm(),
   removeCategory: () => ManagerApp.handleRemoveCategoryForm(),
+  newDish: () => ManagerApp.handleNewDishForm(),
 };
 
 window.addEventListener("popstate", (event) => {

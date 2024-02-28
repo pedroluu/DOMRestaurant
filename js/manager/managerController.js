@@ -167,7 +167,10 @@ class ManagerController {
     this[VIEW].showAdminMenu();
     // Establece una función de manejo de eventos para cerrar ventanas
     this.onCloseWindow();
-    this[VIEW].bindAdminMenu(this.handleNewCategoryForm);
+    this[VIEW].bindAdminMenu(
+      this.handleNewCategoryForm,
+      this.handleRemoveCategoryForm
+    );
   };
 
   // Método llamado durante la inicialización de la aplicación
@@ -293,6 +296,28 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showNewCategoryModal(done, cat, error);
+  };
+
+  handleRemoveCategoryForm = () => {
+    this[VIEW].showRemoveCategoryForm(this[MODEL].getCategories());
+    this[VIEW].bindRemoveCategoryForm(this.handleRemoveCategory);
+  };
+
+  handleRemoveCategory = (name) => {
+    let done;
+    let error;
+    let cat;
+    try {
+      cat = this[MODEL].createCategory(name);
+      this[MODEL].removeCategory(cat);
+      done = true;
+      this.onAddCategory();
+      this.handleRemoveCategoryForm();
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showRemoveCategoryModal(done, cat, error);
   };
 
   // Método para agregar categorías

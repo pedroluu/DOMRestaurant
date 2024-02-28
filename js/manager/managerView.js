@@ -337,7 +337,7 @@ class ManagerView {
     });
   }
 
-  bindAdminMenu(hNewCategory) {
+  bindAdminMenu(hNewCategory, hRemoveCategory) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
       this[EXECUTE_HANDLER](
@@ -349,10 +349,33 @@ class ManagerView {
         event
       );
     });
+    const delCategoryLink = document.getElementById("ldelCategory");
+    delCategoryLink.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        hRemoveCategory,
+        [],
+        "#remove-category",
+        {
+          action: "removeCategory",
+        },
+        "#",
+        event
+      );
+    });
   }
 
   bindNewCategoryForm(handler) {
     newCategoryValidation(handler);
+  }
+
+  bindRemoveCategoryForm(handler) {
+    const removeContainer = document.getElementById("remove-category");
+    const buttons = removeContainer.getElementsByTagName("button");
+    for (const button of buttons) {
+      button.addEventListener("click", function (event) {
+        handler(this.dataset.category);
+      });
+    }
   }
 
   // Método para mostrar las categorías de platos
@@ -882,6 +905,64 @@ class ManagerView {
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,
     });
+  }
+
+  showRemoveCategoryForm(categories) {
+    this.main.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "remove-category";
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Eliminar una categoría</h1>'
+    );
+    const row = document.createElement("div");
+    row.classList.add("row");
+    for (const category of categories) {
+      row.insertAdjacentHTML(
+        "beforeend",
+        ` <div class="col-lg-3 col-md-6 bg-dark text-center">
+        <a data-category="${category.name}" href="#category-list  " class="text-decoration-none">
+            <div class="cat-list-image">
+                <img alt="${category.name}" src="./img/${category.name}.jpg" />
+            </div>
+            <div class="cat-list-text text-white">
+                <h3>${category.name}</h3>
+                <div>${category.description}</div>
+            </div>
+      <div><button class="btn btn-primary" data-category="${category.name}" type='button'>Eliminar</button>
+      </div></a>
+      </div>`
+      );
+    }
+    container.append(row);
+    this.main.append(container);
+  }
+
+  showRemoveCategoryModal(done, cat, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Borrado de categoría";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">La categoría
+    <strong>${cat.name}</strong> ha sido eliminada correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamationtriangle"></i> La categoría <strong>${cat.name}</strong> no se ha podido
+    borrar.</div>`
+      );
+    }
+    messageModal.show();
   }
 }
 // Exporta la clase ManagerView

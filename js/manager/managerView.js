@@ -1161,7 +1161,7 @@ class ManagerView {
 
     form.insertAdjacentHTML(
       "beforeend",
-      `<div class="col-md-4 mb-3">
+      `<div class="col-md-6 mb-3">
 				<label class="form-label text-white" for="npName">Nombre</label>
 				<div class="input-group">
 					<span class="input-group-text"><i class="bi bi-key"></i></span>
@@ -1173,7 +1173,7 @@ class ManagerView {
     );
     form.insertAdjacentHTML(
       "beforeend",
-      `<div class="col-md-4 mb-3">
+      `<div class="col-md-6 mb-3">
 				<label class="form-label text-white" for="npIngredients">Ingredientes *</label>
 				<div class="input-group">
 					<span class="input-group-text"><i class="bi bi-hash"></i></span>
@@ -1186,7 +1186,7 @@ class ManagerView {
     );
     form.insertAdjacentHTML(
       "beforeend",
-      `<div class="col-md-6 mb-3">
+      `<div class="col-md-7 mb-3">
 				<label class="form-label text-white" for="npImage">Imagen *</label>
 				<div class="input-group">
 					<input type="url" class="form-control" id="npImage" name="npImage"
@@ -1198,7 +1198,7 @@ class ManagerView {
     );
     form.insertAdjacentHTML(
       "beforeend",
-      `<div class="col-md-3 mb-3">
+      `<div class="col-md-6 mb-3">
 				<label class="form-label text-white" for="npCategories">Categorías *</label>
 				<div class="input-group">
 					<label class="input-group-text" for="npCategories"><i class="bi bi-card-checklist"></i></label>
@@ -1218,7 +1218,7 @@ class ManagerView {
     }
     form.insertAdjacentHTML(
       "beforeend",
-      `<div class="col-md-3 mb-3">
+      `<div class="col-md-6 mb-3">
 				<label class="form-label text-white" for="npAllergens">Alérgenos *</label>
 				<div class="input-group">
 					<label class="input-group-text" for="npAllergens"><i class="bi bi-card-checklist"></i></label>
@@ -1426,7 +1426,7 @@ class ManagerView {
     container.insertAdjacentHTML(
       "beforeend",
       `<form name="fNewRestaurant" role="form" class="row g-3" novalidate>
-      <div class="col-md-6 mb-3">
+      <div class="col-md-12 mb-3">
         <label class="form-label" for="nrName">Nombre *</label>
         <div class="input-group">
         <span class="input-group-text"><i class="bi bi-type"></i></span>
@@ -1435,11 +1435,31 @@ class ManagerView {
         <div class="valid-feedback">Correcto.</div>
         </div>
       </div>
+      <div class="col-md-6 mb-3">
+				<label class="form-label text-white" for="nrLatitude">Latitud </label>
+				<div class="input-group">
+					<span class="input-group-text"><i class="bi bi-type"></i></span>
+					<input type="text" class="form-control" id="nrLatitude" name="nrLatitude"
+						placeholder="Latitud" value="" required>
+					<div class="invalid-feedback">Se necesitan la latitud</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>
+      <div class="col-md-6 mb-3">
+				<label class="form-label text-white" for="nrLongitude">Longitud </label>
+				<div class="input-group">
+					<span class="input-group-text"><i class="bi bi-hash"></i></span>
+					<input type="text" class="form-control" id="nrLongitude" name="nrLongitude"
+						placeholder="Longitud" value="" required>
+					<div class="invalid-feedback">Se necesitan conocer la longitud</div>
+					<div class="valid-feedback">Correcto.</div>
+				</div>
+			</div>
     <div class="col-md-12 mb-3">
       <label class="form-label" for="nrDescription">Descripción</label>
         <div class="input-group">
         <span class="input-group-text"><i class="bi bi-bodytext"></i></span>
-        <input type="text" class="form-control" id="nrDescription" name="nrDescription" value="">
+        <input type="text" class="form-control" id="nrDescription" name="nrDescription"  placeholder="Descripción" value="">
         <div class="invalid-feedback"></div>
         <div class="valid-feedback">Correcto.</div>
       </div>

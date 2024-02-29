@@ -173,19 +173,47 @@ function newRestaurantValidation(handler) {
   form.addEventListener("submit", function (event) {
     let isValid = true;
     let firstInvalidElement = null;
-    this.nrDescription.value = this.nrDescription.value.trim();
-    showFeedBack(this.nrDescription, true);
+
+    if (!this.nrDescription.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrDescription, false);
+      firstInvalidElement = this.nrDescription;
+    } else {
+      showFeedBack(this.nrDescription, true);
+    }
+
+    if (!this.nrLongitude.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrLongitude, false);
+      firstInvalidElement = this.nrLongitude;
+    } else {
+      showFeedBack(this.nrLongitude, true);
+    }
+
+    if (!this.nrLatitude.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.nrLatitude, false);
+      firstInvalidElement = this.nrLatitude;
+    } else {
+      showFeedBack(this.nrLatitude, true);
+    }
+
     if (!this.nrName.checkValidity()) {
       isValid = false;
       showFeedBack(this.nrName, false);
-      firstInvalidElement = this.ncTitle;
+      firstInvalidElement = this.nrName;
     } else {
       showFeedBack(this.nrName, true);
     }
     if (!isValid) {
       firstInvalidElement.focus();
     } else {
-      handler(this.nrName.value, this.nrDescription.value);
+      handler(
+        this.nrName.value,
+        this.nrLongitude,
+        this.nrLatitude,
+        this.nrDescription.value
+      );
     }
     event.preventDefault();
     event.stopPropagation();
@@ -204,6 +232,9 @@ function newRestaurantValidation(handler) {
     this.nrName.focus();
   });
   form.nrName.addEventListener("change", defaultCheckElement);
+  form.nrLongitude.addEventListener("change", defaultCheckElement);
+  form.nrLatitude.addEventListener("change", defaultCheckElement);
+  form.nrDescription.addEventListener("change", defaultCheckElement);
 }
 
 export { newCategoryValidation, newDishValidation, newRestaurantValidation };

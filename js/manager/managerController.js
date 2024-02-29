@@ -406,9 +406,11 @@ class ManagerController {
     this[VIEW].bindNewRestaurantForm(this.handleCreateRestaurant);
   };
 
-  handleCreateRestaurant = (name, desc) => {
+  handleCreateRestaurant = (name, latitude, longitude, desc) => {
+    const coord = new Coordinate(latitude.value, longitude.value);
     const rest = this[MODEL].createRestaurant(name);
     rest.description = desc;
+    rest.setLocation(coord.getLatitude(), coord.getLongitude());
     let done;
     let error;
     try {

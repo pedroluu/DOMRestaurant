@@ -50,6 +50,12 @@ const RestaurantManager = (function () {
       }
     }
 
+    *getDishes() {
+      for (let dish of this.#dishes.values()) {
+        yield dish;
+      }
+    }
+
     // Método para agregar categorías al sistema
     addCategory(...categories) {
       for (const category of categories) {
@@ -402,11 +408,10 @@ const RestaurantManager = (function () {
           "El plato y todos los menús no deben ser nulos o indefinidos"
         );
       }
-
       menus.forEach((menu) => {
         // Crear un nuevo menú si no existe
-        if (!this.#menus.has(menu.getName())) {
-          this.#menus.set(menu.name, new Menu(menu.name));
+        if (!this.#menus.has(menu.name)) {
+          this.createMenu(menu.name);
         }
 
         const menuEntry = this.#menus.get(menu.name);
@@ -526,7 +531,7 @@ const RestaurantManager = (function () {
       }
 
       dishes.forEach((dish) => {
-        if (!this.#menus.has(menu.getName())) {
+        if (!this.#menus.has(menu.Menu.getName())) {
           throw new RestaurantManagerException(
             `${menu.getName()} es nulo o no está registrado`
           );
@@ -538,8 +543,8 @@ const RestaurantManager = (function () {
           );
         }
 
-        const menuEntry = this.#menus.get(menu.getName());
-        const dishKey = String(dish);
+        const menuEntry = this.#menus.get(menu.Menu.getName());
+        const dishKey = String(dish.name);
 
         // Verificar si el plato está asignado al menú antes de intentar desasignarlo
         if (menuEntry.dishes && menuEntry.dishes[dishKey]) {
@@ -681,7 +686,7 @@ const RestaurantManager = (function () {
       }
 
       const dishNames = Object.keys(menuEntry.dishes);
-      return dishNames;
+      return dishNames[Symbol.iterator]();
     }
 
     findDishes(filterFunction, sortingFunction) {

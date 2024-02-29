@@ -20,6 +20,12 @@ const historyActions = {
     ManagerApp.handleRemoveDishForm();
     ManagerApp.handleRemoveDishListByCategory(event.state.category);
   },
+  newRestaurant: () => ManagerApp.handleNewRestaurantForm(),
+  modifyMenu: () => ManagerApp.handleModifyMenuForm(),
+  modifyMenuByDish: (event) => {
+    ManagerApp.handleModifyMenuForm();
+    ManagerApp.handleDishesAssignedToMenu(event.state.menu);
+  },
 };
 
 window.addEventListener("popstate", (event) => {

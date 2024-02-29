@@ -172,7 +172,8 @@ class ManagerController {
       this.handleRemoveCategoryForm,
       this.handleNewDishForm,
       this.handleRemoveDishForm,
-      this.handleNewRestaurantForm
+      this.handleNewRestaurantForm,
+      this.handleModifyMenuForm
     );
   };
 
@@ -390,6 +391,7 @@ class ManagerController {
     try {
       dish = this[MODEL].createDish(name);
       this[MODEL].removeDish(dish);
+      console.log(this[MODEL]);
       done = true;
     } catch (exception) {
       done = false;
@@ -416,6 +418,60 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showNewRestaurantModal(done, rest, error);
+  };
+
+  handleModifyMenuForm = () => {
+    this[VIEW].showModifyMenuForm(this[MODEL].getMenus());
+    this[VIEW].bindModifyMenuSelects(this.handleDishesAssignedToMenu);
+  };
+
+  handleDishesAssignedToMenu = (menu) => {
+    const men = this[MODEL].createMenu(menu);
+    const MenuIterator = this[MODEL].getDishesInMenu(menu);
+    const dishes = [];
+    // Itera sobre los platos y los agrega al array dishes
+    for (const dishName of MenuIterator) {
+      dishes.push(this[MODEL].createDish(dishName).Dish);
+    }
+    const DishIterator = this[MODEL].getDishes();
+    const allDishes = [];
+    for (const dish of DishIterator) {
+      allDishes.push(dish.Dish);
+    }
+
+    // Obtenemos los platos que no están en común entre dishes y allDishes
+    const dishesNotInCommon = allDishes.filter((dish) => {
+      // Verifica si el plato no está presente en el array dishes
+      return !dishes.some((d) => d.name === dish.name); // Ajusta la comparación según la estructura de tus objetos dish
+    });
+
+    this[VIEW].showModifyMenuList(dishes, dishesNotInCommon);
+    this[VIEW].bindModifyMenu(this.handleModifyMenu);
+  };
+
+  handleModifyMenu = (menu, assigns, notAssigns) => {
+    let done;
+    let error;
+    let men;
+    try {
+      men = this[MODEL].createMenu(menu);
+      for (const dish of assigns) {
+        const object = this[MODEL].createDish(dish).Dish;
+        this[MODEL].deassignDishToMenu(men, object);
+      }
+
+      for (const dish of notAssigns) {
+        const object = this[MODEL].createDish(dish).Dish;
+        this[MODEL].assignDishToMenu(object, men.Menu);
+      }
+      console.log(this[MODEL]);
+
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showModifyMenuModal(done, men, error);
   };
 
   // Método para agregar categorías

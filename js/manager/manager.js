@@ -490,12 +490,11 @@ const RestaurantManager = (function () {
       }
 
       dishes.forEach((dish) => {
-        if (!this.#categories.has(category.getName())) {
+        if (!this.#categories.has(category.name)) {
           throw new RestaurantManagerException(
             `${category.getName()} es nulo o no está registrado`
           );
         }
-
         if (!this.#dishes.has(dish.name)) {
           throw new RestaurantManagerException(
             `${dish.name} es nulo o no está registrado`
@@ -651,7 +650,6 @@ const RestaurantManager = (function () {
           "Category must not be null or undefined"
         );
       }
-
       const categoryName = String(category);
 
       if (!this.#categories.has(category.getName())) {
@@ -676,6 +674,43 @@ const RestaurantManager = (function () {
 
       // Devolver un iterador para los nombres de los platos
       return dishNames[Symbol.iterator]();
+    }
+
+    getCategoriesOfDish(dishName) {
+      // Verificar si el plato existe en el mapa de platos
+      if (!this.#dishes.has(dishName)) {
+        throw new RestaurantManagerException(`${dishName} is not registered`);
+      }
+
+      // Obtener el objeto que representa el plato
+      const dishEntry = this.#dishes.get(dishName);
+
+      // Obtener las categorías del plato
+      const dishCategories = dishEntry.categories;
+
+      // Crear un array para almacenar las categorías asignadas
+      const assignedCategories = [];
+
+      // Iterar sobre las categorías del plato y agregar las asignadas al array
+      for (const categoryName in dishCategories) {
+        if (dishCategories[categoryName]) {
+          // Extraer el nombre de la categoría utilizando una expresión regular
+          const categoryNameOnly = categoryName
+            .match(/Category:\s(.*?),/)[1]
+            .trim();
+
+          // Obtener la categoría del mapa de categorías
+          const category = this.#categories.get(categoryNameOnly);
+
+          // Agregar la categoría al array
+          if (category) {
+            assignedCategories.push(category);
+          }
+        }
+      }
+
+      // Devolver un iterador para las categorías asignadas del plato
+      return assignedCategories[Symbol.iterator]();
     }
 
     // Método para obtener los platos asociados a un menú

@@ -100,6 +100,14 @@ function newDishValidation(handler) {
       showFeedBack(this.npCategories, true);
     }
 
+    if (!this.npImage.checkValidity()) {
+      isValid = false;
+      showFeedBack(this.npImage, false);
+      firstInvalidElement = this.npImage;
+    } else {
+      showFeedBack(this.npImage, true);
+    }
+
     if (!this.npIngredients.checkValidity()) {
       isValid = false;
       showFeedBack(this.npIngredients, false);
@@ -155,25 +163,8 @@ function newDishValidation(handler) {
 
   form.npName.addEventListener("change", defaultCheckElement);
   form.npIngredients.addEventListener("change", defaultCheckElement);
+  form.npImage.addEventListener("change", defaultCheckElement);
   form.npDescription.addEventListener("change", defaultCheckElement);
-
-  form.npImage.addEventListener("change", function (event) {
-    const size = 100;
-    if (!this.value) {
-      const message = "Adjuntar un fichero es obligatorio.";
-      showFeedBack(this, false, message);
-    } else if (!checkFileExtension(this.files[0], ["jpg", "png", "gif"])) {
-      const message =
-        "Debe seleccionar un archivo con extensión jpg, png ogif.";
-      showFeedBack(this, false, message);
-    } else if (checkFileSize(this.files[0], size)) {
-      const message = `El archivo ${this.files[0].name} no debe ser mayor a
-    ${size}KB`;
-      showFeedBack(this, false, message);
-    } else {
-      showFeedBack(this, true);
-    }
-  });
 }
 
 function newRestaurantValidation(handler) {
@@ -215,63 +206,4 @@ function newRestaurantValidation(handler) {
   form.nrName.addEventListener("change", defaultCheckElement);
 }
 
-// function ModifyMenuValidation(handler) {
-//   const form = document.forms.fModifyDishByDishes;
-//   form.setAttribute("novalidate", "");
-
-//   form.addEventListener("submit", function (event) {
-//     let isValid = true;
-//     let firstInvalidElement = null;
-
-//     if (!this.mdAssignDishes.checkValidity()) {
-//       isValid = false;
-//       showFeedBack(this.mdAssignDishes, false);
-//       firstInvalidElement = this.mdAssignDishes;
-//     } else {
-//       showFeedBack(this.mdAssignDishes, true);
-//     }
-
-//     if (!this.mdNotAssignDishes.checkValidity()) {
-//       isValid = false;
-//       showFeedBack(this.mdNotAssignDishes, false);
-//       firstInvalidElement = this.mdNotAssignDishes;
-//     } else {
-//       showFeedBack(this.mdNotAssignDishes, true);
-//     }
-
-//     if (!isValid) {
-//       firstInvalidElement.focus();
-//     } else {
-//       const assignOptions = [...this.mdAssignDishes.selectedOptions].map(
-//         (option) => option.value
-//       );
-//       const notAssignsOptions = [...this.mdNotAssignDishes.selectedOptions].map(
-//         (option) => option.value
-//       );
-//       handler(assignOptions, notAssignsOptions);
-//     }
-
-//     event.preventDefault();
-//     event.stopPropagation();
-//   });
-//   form.addEventListener("reset", function (event) {
-//     for (const div of this.querySelectorAll(
-//       "div.valid-feedback, div.invalid-feedback"
-//     )) {
-//       div.classList.remove("d-block");
-//       div.classList.add("d-none");
-//     }
-//     for (const input of this.querySelectorAll("input")) {
-//       input.classList.remove("is-valid");
-//       input.classList.remove("is-invalid");
-//     }
-//     this.mdAssignDishes.focus();
-//   });
-// }
-
-export {
-  newCategoryValidation,
-  newDishValidation,
-  newRestaurantValidation,
-  // ModifyMenuValidation,
-};
+export { newCategoryValidation, newDishValidation, newRestaurantValidation };

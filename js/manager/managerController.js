@@ -173,7 +173,8 @@ class ManagerController {
       this.handleNewDishForm,
       this.handleRemoveDishForm,
       this.handleNewRestaurantForm,
-      this.handleModifyMenuForm
+      this.handleModifyMenuForm,
+      this.handleModifyCategoriesForm
     );
   };
 
@@ -472,6 +473,63 @@ class ManagerController {
       error = exception;
     }
     this[VIEW].showModifyMenuModal(done, men, error);
+  };
+
+  handleModifyCategoriesForm = () => {
+    this[VIEW].showModifyCategoriesForm(this[MODEL].getDishes());
+    this[VIEW].bindModifyCategoriesSelect(this.handleCategoriesAssignedToDish);
+  };
+
+  handleCategoriesAssignedToDish = (dish) => {
+    const dis = this[MODEL].createDish(dish);
+    const CategoryIterator = this[MODEL].getCategoriesOfDish(dis.Dish.name);
+    const categoriesAssigned = [];
+    // Itera sobre los platos y los agrega al array dishes
+    for (const category of CategoryIterator) {
+      categoriesAssigned.push(this[MODEL].createCategory(category.name));
+    }
+    const notAssignedIterator = this[MODEL].getCategories();
+    const allCategories = [];
+    for (const category of notAssignedIterator) {
+      allCategories.push(category);
+    }
+
+    // Obtenemos los categorias no asignadas
+    const CategoriesNotInCommon = allCategories.filter((category) => {
+      // Verifica si la categoria no está en las asignadas
+      return !categoriesAssigned.some((d) => d.name === category.name);
+    });
+
+    this[VIEW].showModifyCategoryList(
+      categoriesAssigned,
+      CategoriesNotInCommon
+    );
+    this[VIEW].bindModifyCategories(this.handleModifyCategories);
+  };
+
+  handleModifyCategories = (dish, assigns, notAssigns) => {
+    let done;
+    let error;
+    let dis;
+    try {
+      dis = this[MODEL].createDish(dish);
+      for (const category of assigns) {
+        const cat = this[MODEL].createCategory(category);
+        this[MODEL].deassignCategoryToDish(cat, dis.Dish);
+      }
+
+      for (const category of notAssigns) {
+        const cat = this[MODEL].createCategory(category);
+        this[MODEL].assignCategoryToDish(cat, dis.Dish);
+      }
+      console.log(this[MODEL]);
+
+      done = true;
+    } catch (exception) {
+      done = false;
+      error = exception;
+    }
+    this[VIEW].showModifyCategoriesModal(done, dis, error);
   };
 
   // Método para agregar categorías

@@ -26,6 +26,11 @@ const historyActions = {
     ManagerApp.handleModifyMenuForm();
     ManagerApp.handleDishesAssignedToMenu(event.state.menu);
   },
+  modifyCategories: () => ManagerApp.handleModifyCategoriesForm(),
+  modifyDishByCategories: (event) => {
+    ManagerApp.handleModifyMenuForm();
+    ManagerApp.handleCategoriesAssignedToDish(event.state.dish);
+  },
 };
 
 window.addEventListener("popstate", (event) => {

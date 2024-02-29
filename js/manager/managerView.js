@@ -2,7 +2,6 @@ import {
   newCategoryValidation,
   newDishValidation,
   newRestaurantValidation,
-  // ModifyMenuValidation,
 } from "./validation.js";
 
 // Definición de un símbolo para uso interno en la clase ManagerView
@@ -181,7 +180,6 @@ class ManagerView {
       link.addEventListener("click", (event) => {
         // Obtiene la categoría del atributo 'data' del elemento clicado
         const { category } = event.currentTarget.dataset;
-        console.log(event.currentTarget.dataset);
 
         // Llama al método [EXECUTE_HANDLER] con los parámetros necesarios
         this[EXECUTE_HANDLER](
@@ -348,7 +346,8 @@ class ManagerView {
     hNewDishForm,
     hRemoveDishForm,
     hNewRestaurant,
-    hModifyMenu
+    hModifyMenu,
+    hModifyCategories
   ) {
     const newCategoryLink = document.getElementById("lnewCategory");
     newCategoryLink.addEventListener("click", (event) => {
@@ -414,6 +413,17 @@ class ManagerView {
         [],
         "#modify-menu",
         { action: "modifyMenu" },
+        "#",
+        event
+      );
+    });
+    const modifyCategoriesLink = document.getElementById("lmodCategory");
+    modifyCategoriesLink.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        hModifyCategories,
+        [],
+        "#modify-categories",
+        { action: "modifyCategories" },
         "#",
         event
       );
@@ -505,6 +515,50 @@ class ManagerView {
       const mdNotAssignDishes = document.getElementById("mdNotAssignDishes");
       const selectedOptions2 = Array.from(
         mdNotAssignDishes.selectedOptions
+      ).map((option) => option.value);
+
+      // Aquí puedes llamar al manejador y pasarle los datos que has recogido
+      handler(selectedMenu, selectedOptions, selectedOptions2);
+    });
+  }
+
+  bindModifyCategoriesSelect(mCategories) {
+    const mdCategories = document.getElementById("mdCategories");
+    mdCategories.addEventListener("change", (event) => {
+      this[EXECUTE_HANDLER](
+        mCategories,
+        [event.currentTarget.value],
+        "#modify-categories",
+        {
+          action: "modifyDishByCategories",
+          dish: event.currentTarget.value,
+        },
+        "#modify-categories",
+        event
+      );
+    });
+  }
+
+  bindModifyCategories(handler) {
+    const mdCategories = document.getElementById("mdCategories");
+
+    const button = document.querySelector(".assign-btn");
+    button.addEventListener("click", function () {
+      // Obtener el valor seleccionado del primer select
+      const selectedMenu = mdCategories.value;
+
+      // Obtener las opciones seleccionadas del segundo select
+      const mdAssignCategories = document.getElementById("mdAssignCategories");
+      const selectedOptions = Array.from(
+        mdAssignCategories.selectedOptions
+      ).map((option) => option.value);
+
+      // Obtener las opciones seleccionadas del tercer select
+      const mdNotAssignCategories = document.getElementById(
+        "mdNotAssignCategories"
+      );
+      const selectedOptions2 = Array.from(
+        mdNotAssignCategories.selectedOptions
       ).map((option) => option.value);
 
       // Aquí puedes llamar al manejador y pasarle los datos que has recogido
@@ -660,7 +714,7 @@ class ManagerView {
     for (const category of categories) {
       container.insertAdjacentHTML(
         "beforeend",
-        `<li><a datacategory="${category.name}" class="dropdown-item" href="#productlist">${category.name}</a></li>`
+        `<li><a data-category="${category.name}" class="dropdown-item" href="#productlist">${category.name}</a></li>`
       );
     }
   }
@@ -941,11 +995,11 @@ class ManagerView {
     );
     suboptions.insertAdjacentHTML(
       "beforeend",
-      '<li><a id="lmodCategory" class="dropdown-item" href="#mod-categoría">Modificar categoría</a></li>'
+      '<li><a id="lmodMenu" class="dropdown-item" href="#mod-menu">Modificar menú</a></li>'
     );
     suboptions.insertAdjacentHTML(
       "beforeend",
-      '<li><a id="lmodMenu" class="dropdown-item" href="#mod-menu">Modificar menú</a></li>'
+      '<li><a id="lmodCategory" class="dropdown-item" href="#mod-categoría">Modificar categoría</a></li>'
     );
     menuOption.append(suboptions);
     this.menu.append(menuOption);
@@ -1135,10 +1189,9 @@ class ManagerView {
       `<div class="col-md-6 mb-3">
 				<label class="form-label text-white" for="npImage">Imagen *</label>
 				<div class="input-group">
-					<input type="file" class="form-control" id="npImage" name="npImage"
+					<input type="url" class="form-control" id="npImage" name="npImage"
 						placeholder="" value="" required>
-					<div class="invalid-feedback">Debe seleccionar un archivo con
-          extensión jpg, png o gif.</div>
+					<div class="invalid-feedback">Debes poner la url de tu imagen.</div>
 					<div class="valid-feedback">Correcto.</div>
 				</div>
 			</div>`
@@ -1559,6 +1612,141 @@ class ManagerView {
         document.fModifyMenu.reset();
       }
       document.fModifyMenu.mdMenu.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
+    });
+  }
+
+  showModifyCategoriesForm(dishes) {
+    this.main.replaceChildren();
+    if (this.categories.children.length > 0)
+      this.categories.children[0].remove();
+
+    const container = document.createElement("div");
+    container.classList.add("container");
+    container.classList.add("my-3");
+    container.id = "modify-categories";
+
+    container.insertAdjacentHTML(
+      "afterbegin",
+      '<h1 class="display-5">Modificar categorías</h1>'
+    );
+
+    const form = document.createElement("form");
+    form.name = "fModifyCategories";
+    form.setAttribute("role", "form");
+    form.setAttribute("novalidate", "");
+    form.classList.add("row");
+    form.classList.add("g-3");
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-6 mb-3">
+				<label class="form-label" for="mdCategories">Platos</label>
+				<div class="input-group">
+					<label class="input-group-text" for="mdCategories"><i class="bi bi-card-checklist"></i></label>
+					<select class="form-select" name="mdCategories" id="mdCategories">
+						<option disabled selected>Selecciona un plato</option>
+					</select>
+				</div>
+			</div>`
+    );
+    const mdCategories = form.querySelector("#mdCategories");
+    for (const dish of dishes) {
+      mdCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${dish.Dish.name}">${dish.Dish.name}</option>`
+      );
+    }
+
+    container.append(form);
+    container.insertAdjacentHTML(
+      "beforeend",
+      '<div id="product-list" class="container my-3"><div class="row"></div></div>'
+    );
+
+    this.main.append(container);
+  }
+
+  showModifyCategoryList(assignCategories, notassignedCategories) {
+    // Obtener el formulario del primer método
+    const form = document.querySelector('form[name="fModifyCategories"]');
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-3 mb-3">
+            <label class="form-label text-white" for="mdAssignCategories">Categorias asignadas *</label>
+            <div class="input-group">
+                <label class="input-group-text" for="mdAssignCategories"><i class="bi bi-card-checklist"></i></label>
+                <select class="form-select" name="mdAssignCategories" id="mdAssignCategories" multiple required>
+                </select>
+                <div class="invalid-feedback">Debes modificar el plato</div>
+                <div class="valid-feedback">Correcto.</div>
+            </div>
+        </div>`
+    );
+
+    const mdAssignDisCategories = form.querySelector("#mdAssignCategories");
+    for (const category of assignCategories) {
+      mdAssignDisCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${category.name}">${category.name}</option>`
+      );
+    }
+
+    form.insertAdjacentHTML(
+      "beforeend",
+      `<div class="col-md-3 mb-3">
+            <label class="form-label text-white" for="mdNotAssignCategories">Categorias no asignadas *</label>
+            <div class="input-group">
+                <label class="input-group-text" for="mdNotAssignCategories"><i class="bi bi-card-checklist"></i></label>
+                <select class="form-select" name="mdNotAssignCategories" id="mdNotAssignCategories" multiple required>
+                </select>
+                <div class="invalid-feedback">Debes modificar el menú</div>
+                <div class="valid-feedback">Correcto.</div>
+            </div>
+        </div>
+        <div class="mb-12">
+            <button class="btn btn-primary assign-btn" type="button">Enviar</button>
+            <button class="btn btn-primary" type="reset">Cancelar</button>
+        </div>`
+    );
+
+    const mdNotAssignCategories = form.querySelector("#mdNotAssignCategories");
+    for (const category of notassignedCategories) {
+      mdNotAssignCategories.insertAdjacentHTML(
+        "beforeend",
+        `<option value="${category.name}">${category.name}</option>`
+      );
+    }
+  }
+
+  showModifyCategoriesModal(done, dish, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Modificar categorías del plato";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El plato <strong>${dish.Dish.name}</strong> ha sido modificado correctamente.</div>`
+      );
+    } else {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="error text-danger p-3"><i class="bi bi-exclamation-triangle"></i> El plato <strong>${dish.Dish.name}</strong> no se ha podido modificar.</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fModifyCategories.reset();
+      }
+      document.fModifyCategories.mdCategories.focus();
     };
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,

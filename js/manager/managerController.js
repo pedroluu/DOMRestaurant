@@ -6,6 +6,7 @@ import {
   Restaurant,
   Coordinate,
 } from "./manager.js";
+import { getCookie } from "../util.js";
 
 const MODEL = Symbol("managerModel");
 const VIEW = Symbol("managerView");
@@ -157,6 +158,9 @@ class ManagerController {
   }
   // Método llamado al cargar la aplicación
   onLoad = () => {
+    if (getCookie("acceptedCookieMessage") !== "true") {
+      this[VIEW].showCookiesMessage();
+    }
     // Inicia la carga de objetos de gestión
     this[LOAD_MANAGER_OBJECTS]();
     // Agrega funciones de manejo de eventos para agregar categorías, alérgenos, menús y restaurantes
@@ -569,3 +573,5 @@ class ManagerController {
   };
 }
 export default ManagerController;
+
+//https://github.com/pedroluu/DOMRestaurant.git Repositorio GitHub

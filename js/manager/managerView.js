@@ -4,6 +4,8 @@ import {
   newRestaurantValidation,
 } from "./validation.js";
 
+import { setCookie } from "../util.js";
+
 // Definición de un símbolo para uso interno en la clase ManagerView
 const EXECUTE_HANDLER = Symbol("excecuteHandler");
 
@@ -1770,6 +1772,63 @@ class ManagerView {
     };
     messageModalContainer.addEventListener("hidden.bs.modal", listener, {
       once: true,
+    });
+  }
+
+  showCookiesMessage() {
+    const toast = `<div class="fixed-top p-5 mt-5 ">
+    <div id="cookies-message" class="toast fade show bg-dark text-whitew-100 w-75 h-50 ml-30 mx-auto " role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <h4 class="me-auto">Aviso de uso de cookies</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"aria-label="Close" id="btnDismissCookie"></button>
+      </div>
+      <div class="toast-body p-4 d-flex flex-column w-75">
+        <p class="text-white">
+          Este sitio web almacenda datos en cookies para activar su
+          funcionalidad, entre las que se encuentra
+          datos analíticos y personalización. Para poder utilizar este
+          sitio, estás automáticamente aceptando que utilizamos cookies.
+        </p>
+      <div class="ml-auto">
+        <button type="button" class="btn btn-outline-light mr-3 deny" id="btnDenyCookie" data-bs-dismiss="toast">
+          Denegar
+        </button>
+          <button type="button" class="btn btn-primary" id="btnAcceptCookie" data-bs-dismiss="toast">
+          Aceptar
+          </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    document.body.insertAdjacentHTML("afterbegin", toast);
+
+    const cookiesMessage = document.getElementById("cookies-message");
+    cookiesMessage.addEventListener("hidden.bs.toast", (event) => {
+      event.currentTarget.parentElement.remove();
+    });
+
+    const denyCookieFunction = (event) => {
+      this.main.replaceChildren();
+      this.main.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="container my3"><div class="alert alert-warning" role="alert">
+      <strong>Para utilizar esta web es necesario aceptar el uso de
+      cookies. Debe recargar la página y aceptar las condicones para seguir
+      navegando. Gracias.</strong>
+      </div></div>`
+      );
+      this.categories.remove();
+      this.menu.remove();
+      this.dishes.remove();
+    };
+    const btnDenyCookie = document.getElementById("btnDenyCookie");
+    btnDenyCookie.addEventListener("click", denyCookieFunction);
+    const btnDismissCookie = document.getElementById("btnDismissCookie");
+    btnDismissCookie.addEventListener("click", denyCookieFunction);
+
+    const btnAcceptCookie = document.getElementById("btnAcceptCookie");
+    btnAcceptCookie.addEventListener("click", (event) => {
+      setCookie("accetedCookieMessage", "true", 1);
     });
   }
 }

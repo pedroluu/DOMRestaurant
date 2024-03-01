@@ -164,3 +164,14 @@ body {
 #remove-dish {
   margin-left: 15%;
 }
+
+button.deny {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+  color: rgb(255, 255, 255);
+}
+button.deny:hover {
+  background-color: #ff6b6b;
+  border-color: #ff6b6b;
+  color: rgb(255, 255, 255);
+}

@@ -11,11 +11,15 @@ import { getCookie } from "../util.js";
 const MODEL = Symbol("managerModel");
 const VIEW = Symbol("managerView");
 const LOAD_MANAGER_OBJECTS = Symbol("Load Manager Objects");
+const AUTH = Symbol("AUTH");
+const USER = Symbol("USER");
 
 class ManagerController {
-  constructor(modelManager, viewManager) {
+  constructor(modelManager, viewManager, auth) {
     this[MODEL] = modelManager;
     this[VIEW] = viewManager;
+    this[AUTH] = auth;
+    this[USER] = null;
 
     this.onLoad();
     this.onInit();
@@ -161,25 +165,27 @@ class ManagerController {
     if (getCookie("acceptedCookieMessage") !== "true") {
       this[VIEW].showCookiesMessage();
     }
+
     // Inicia la carga de objetos de gestión
     this[LOAD_MANAGER_OBJECTS]();
+    const userCookie = getCookie("activeUser");
+    if (userCookie) {
+      const user = this[AUTH].getUser(userCookie);
+      if (user) {
+        this[USER] = user;
+        this.onOpenSession();
+      }
+    } else {
+      this.onCloseSession();
+    }
+    // this.onCloseSession();
+
     // Agrega funciones de manejo de eventos para agregar categorías, alérgenos, menús y restaurantes
     this.onAddCategory();
     this.onAddAllergen();
     this.onAddMenu();
     this.onAddRestaurant();
-    this[VIEW].showAdminMenu();
-    // Establece una función de manejo de eventos para cerrar ventanas
     this.onCloseWindow();
-    this[VIEW].bindAdminMenu(
-      this.handleNewCategoryForm,
-      this.handleRemoveCategoryForm,
-      this.handleNewDishForm,
-      this.handleRemoveDishForm,
-      this.handleNewRestaurantForm,
-      this.handleModifyMenuForm,
-      this.handleModifyCategoriesForm
-    );
   };
 
   // Método llamado durante la inicialización de la aplicación
@@ -187,13 +193,8 @@ class ManagerController {
     // Muestra las categorías y platos existentes en la vista
     this[VIEW].showCategories(this[MODEL].getCategories());
     this[VIEW].showDishes(this[MODEL].getRandomDishes());
-    // Establece los enlaces de eventos para listar platos por categoría, mostrar detalles de platos,
-    // listar platos por alérgeno, listar platos por menú y mostrar detalles de restaurantes
     this[VIEW].bindDishCategoryList(this.handleDishCategoryList);
     this[VIEW].bindDishDetails(this.handleDishDetails);
-    this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
-    this[VIEW].bindDishMenuList(this.handleDishMenuList);
-    this[VIEW].bindRestaurant(this.handleRestaurantDetails);
   };
 
   // Manejador de eventos que llama al método onInit
@@ -538,6 +539,32 @@ class ManagerController {
     this[VIEW].showModifyCategoriesModal(done, dis, error);
   };
 
+  handleLoginForm = () => {
+    this[VIEW].showLogin();
+    this[VIEW].bindLogin(this.handleLogin);
+  };
+
+  handleLogin = (username, password, remember) => {
+    let done;
+    if (this[AUTH].validateUser(username, password)) {
+      this[USER] = this[AUTH].getUser(username);
+      this.onOpenSession();
+      if (remember) {
+        this[VIEW].setUserCookie(this[USER]);
+      }
+      done = true;
+      this[VIEW].showValidUserModal(done, username);
+    } else {
+      this[VIEW].showInvalidUserMessage();
+    }
+  };
+
+  handleCloseSession = () => {
+    this.onCloseSession();
+    this.onInit();
+    this[VIEW].initHistory();
+  };
+
   // Método para agregar categorías
   onAddCategory = () => {
     // Muestra las categorías en el menú y establece enlaces de eventos para manejar las acciones relacionadas con las categorías
@@ -551,18 +578,21 @@ class ManagerController {
   onAddAllergen = () => {
     // Muestra los alérgenos en el menú
     this[VIEW].showAllergensInMenu(this[MODEL].getAllergens());
+    this[VIEW].bindDishAllergenList(this.handleDishAllergenList);
   };
 
   // Método para agregar menús
   onAddMenu = () => {
     // Muestra los menús en el menú
     this[VIEW].showMenusInMenu(this[MODEL].getMenus());
+    this[VIEW].bindDishMenuList(this.handleDishMenuList);
   };
 
   // Método para agregar restaurantes
   onAddRestaurant = () => {
     // Muestra los restaurantes en el menú
     this[VIEW].showRestaurantsInMenu(this[MODEL].getRestaurants());
+    this[VIEW].bindRestaurant(this.handleRestaurantDetails);
   };
 
   // Método para cerrar ventanas abiertas desde el menú
@@ -571,6 +601,34 @@ class ManagerController {
     this[VIEW].showWindowCloseInMenu();
     this[VIEW].bindCloseWindowInMenu(this.handleCloseWindowInMenu);
   };
+
+  onOpenSession() {
+    this.onInit();
+    this[VIEW].initHistory();
+    this[VIEW].showAuthUserProfile(this[USER]);
+    this[VIEW].showAdminMenu();
+
+    // Establece una función de manejo de eventos para cerrar ventanas
+
+    this[VIEW].bindAdminMenu(
+      this.handleNewCategoryForm,
+      this.handleRemoveCategoryForm,
+      this.handleNewDishForm,
+      this.handleRemoveDishForm,
+      this.handleNewRestaurantForm,
+      this.handleModifyMenuForm,
+      this.handleModifyCategoriesForm
+    );
+    this[VIEW].bindCloseSession(this.handleCloseSession);
+  }
+
+  onCloseSession() {
+    this[USER] = null;
+    this[VIEW].deleteUserCookie();
+    this[VIEW].showIdentificationLink();
+    this[VIEW].bindIdentificationLink(this.handleLoginForm);
+    this[VIEW].removeAdminMenu();
+  }
 }
 export default ManagerController;
 

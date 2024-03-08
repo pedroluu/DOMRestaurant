@@ -818,7 +818,6 @@ const RestaurantManager = (function () {
     getRandomDishes() {
       // Obtener claves del mapa
       const keys = Array.from(this.#dishes.keys());
-
       // Almacenar los objetos aleatorios seleccionados
       const objetosAleatorios = [];
 

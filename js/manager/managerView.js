@@ -42,6 +42,10 @@ class ManagerView {
     event.preventDefault();
   }
 
+  initHistory() {
+    history.replaceState({ action: "init" }, null);
+  }
+
   bindInit(handler) {
     // Agrega un evento 'click' al elemento con id 'init'
     document.getElementById("init").addEventListener("click", (event) => {
@@ -568,6 +572,37 @@ class ManagerView {
     });
   }
 
+  bindIdentificationLink(handler) {
+    const login = document.getElementById("login");
+    login.addEventListener("click", (event) => {
+      this[EXECUTE_HANDLER](
+        handler,
+        [],
+        "main",
+        { action: "login" },
+        "#",
+        event
+      );
+    });
+  }
+
+  bindLogin(handler) {
+    const form = document.forms.fLogin;
+    form.addEventListener("submit", (event) => {
+      handler(form.username.value, form.password.value, form.remember.checked);
+      event.preventDefault();
+    });
+  }
+
+  bindCloseSession(handler) {
+    document
+      .getElementById("aCloseSession")
+      .addEventListener("click", (event) => {
+        handler();
+        event.preventDefault();
+      });
+  }
+
   // Método para mostrar las categorías de platos
   showCategories(categories) {
     // Elimina el contenido actual de la sección de categorías si existe
@@ -965,7 +1000,7 @@ class ManagerView {
     menuOption.insertAdjacentHTML(
       "beforeend",
       `<a class="nav-link dropdown-toggle"
-      href="#" id="navMenu" role="button"
+      href="#" id="adminMenu" role="button"
       data-bs-toggle="dropdown" aria-expanded="false"
       style="text-decoration: none;color: #ffffff;
       font-weight: bold;
@@ -1806,12 +1841,16 @@ class ManagerView {
     cookiesMessage.addEventListener("hidden.bs.toast", (event) => {
       event.currentTarget.parentElement.remove();
     });
+    const btnAcceptCookie = document.getElementById("btnAcceptCookie");
+    btnAcceptCookie.addEventListener("click", (event) => {
+      setCookie("acceptedCookieMessage", "true", 1);
+    });
 
     const denyCookieFunction = (event) => {
       this.main.replaceChildren();
       this.main.insertAdjacentHTML(
         "afterbegin",
-        `<div class="container my3"><div class="alert alert-warning" role="alert">
+        `<div  id="deny" class="container my3"><div id="deny__cookie" class="alert alert-warning" role="alert">
       <strong>Para utilizar esta web es necesario aceptar el uso de
       cookies. Debe recargar la página y aceptar las condicones para seguir
       navegando. Gracias.</strong>
@@ -1825,11 +1864,122 @@ class ManagerView {
     btnDenyCookie.addEventListener("click", denyCookieFunction);
     const btnDismissCookie = document.getElementById("btnDismissCookie");
     btnDismissCookie.addEventListener("click", denyCookieFunction);
+  }
 
-    const btnAcceptCookie = document.getElementById("btnAcceptCookie");
-    btnAcceptCookie.addEventListener("click", (event) => {
-      setCookie("accetedCookieMessage", "true", 1);
+  showIdentificationLink() {
+    const userArea = document.getElementById("userArea");
+    userArea.replaceChildren();
+    userArea.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="account d-flex mx-2 flex-column" style="text-align: right; height: 40px">
+      <a id="login" href="#">Identificate</a>
+    </div>`
+    );
+  }
+
+  showLogin() {
+    this.main.replaceChildren();
+    const login = `<div class="container h-100">
+    <div class="d-flex justify-content-center h-100">
+      <div class="user_card">
+        <div class="d-flex justify-content-center form_container">
+          <form name="fLogin" role="form" novalidate>
+            <div class="input-group mb-3">
+              <div class="input-group-append">
+              </div>
+              <input type="text" name="username" class="form-control input_user" value="" placeholder="usuario">
+            </div>
+            <div class="input-group mb-2">
+              <div class="input-group-append">
+              </div>
+              <input type="password" name="password" class="form-control input_pass" value="" placeholder="contraseña">
+            </div>
+            <div class="form-group">
+              <div class="custom-control custom-checkbox">
+                <input name="remember" type="checkbox" class="customcontrol-input" id="customControlInline">
+                  <label class="custom-control-label" for="customControlInline">Recuerdame</label>
+              </div>
+            </div>
+              <div class="d-flex justify-content-center mt-3 login_container">
+                <button class="btn login_btn bg-dark" type="submit">Acceder</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>`;
+    this.main.insertAdjacentHTML("afterbegin", login);
+  }
+
+  showInvalidUserMessage() {
+    this.main.insertAdjacentHTML(
+      "beforeend",
+      `<div  id="invalid" class="container my3"><div id="invalid_user" class="alert alert-warning" role="alert">
+    <strong>El usuario y la contraseña no son válidos. Inténtelo
+    nuevamente.</strong>
+    </div></div>`
+    );
+    document.forms.fLogin.reset();
+    document.forms.fLogin.username.focus();
+  }
+
+  showValidUserModal(done, user, error) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Acceso correcto";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">Hola ${user}</div>`
+      );
+    }
+    messageModal.show();
+    const listener = (event) => {
+      if (done) {
+        document.fLogin.reset();
+      }
+      document.fLogin.username.focus();
+    };
+    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+      once: true,
     });
+  }
+
+  showAuthUserProfile(user) {
+    const userArea = document.getElementById("userArea");
+    userArea.replaceChildren();
+    userArea.insertAdjacentHTML(
+      "afterbegin",
+      `<div class="account d-flex mx-2 flex-row justify-content-end align-items-center">
+       
+        <div class="image ml-2">
+          <img class="profile-image" alt="${user.username}" src="./img/user.png" />
+        </div>
+        <div>
+        <div class= text-black>
+        ${user.username}
+        </div>
+          <a class="text-decoration-none text-white" id="aCloseSession" href="#">Cerrar sesión</a>
+        </div>
+      </div>`
+    );
+  }
+
+  setUserCookie(user) {
+    setCookie("activeUser", user.username, 1);
+  }
+
+  deleteUserCookie() {
+    setCookie("activeUser", "", 0);
+  }
+
+  removeAdminMenu() {
+    const adminMenu = document.getElementById("adminMenu");
+    if (adminMenu) adminMenu.parentElement.remove();
   }
 }
 // Exporta la clase ManagerView

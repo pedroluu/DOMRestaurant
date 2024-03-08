@@ -8,7 +8,7 @@ body {
   background-image: url("../img/fondorest.jpg");
   background-size: cover;
   background-position: center;
-  padding: 20px 0;
+  padding: 10px 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center; /* Centra los elementos hijos horizontalmente */
   color: #ffffff; /* Cambiar el color del texto si la imagen de fondo es oscura */
@@ -20,38 +20,37 @@ body {
   max-width: 100px; /* Reducir el tamaño máximo del logo */
 }
 
-.intro-container .container {
-  width: 80%; /* Ajustar el ancho del encabezado */
-  margin: 0 auto; /* Centrar el encabezado horizontalmente */
-  display: flex; /* Utiliza flexbox para alinear los elementos hijos */
-  justify-content: space-between; /* Espacia los elementos hijos de manera uniforme */
+.intro-container .container_ini {
+  display: flex;
+  width: 100%; /* Ajustar el ancho del encabezado */
+  justify-content: center;
   align-items: center; /* Centra los elementos hijos verticalmente */
   padding: 0 20px; /* Añade un relleno a los lados del encabezado */
 }
 
-.intro-container nav ul {
+.intro-container_ini nav ul {
   width: auto;
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-.container nav {
+.container_ini nav {
   margin: 0 auto;
 }
 
-.container nav ul li {
+.container_ini nav ul li {
   display: inline;
   margin-left: 20px;
 }
 
-.container nav ul li a {
+.container_ini nav ul li a {
   text-decoration: none;
   color: #ffffff;
   font-weight: bold;
   transition: color 0.3s;
 }
 
-.container nav ul li a:hover {
+.container_ini nav ul li a:hover {
   color: #ff6b6b;
 }
 
@@ -174,4 +173,109 @@ button.deny:hover {
   background-color: #ff6b6b;
   border-color: #ff6b6b;
   color: rgb(255, 255, 255);
+}
+
+#login {
+  cursor: pointer;
+  display: block;
+  font-family: "Open Sans", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  padding: 8px;
+  height: 150px;
+  text-decoration: none;
+  color: #ffffff;
+}
+
+#login:hover {
+  color: #ff6b6b;
+}
+
+.user_card {
+  width: 350px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background: #ff6b6b;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 5px;
+}
+.brand_logo_container {
+  position: absolute;
+  height: 170px;
+  width: 170px;
+  top: -75px;
+  border-radius: 50%;
+  background: #60a3bc;
+  padding: 10px;
+  text-align: center;
+}
+.brand_logo {
+  height: 150px;
+  width: 150px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+.form_container {
+  margin-top: 20px;
+}
+.login_btn {
+  width: 100%;
+  /* background: #1b1817 !important; */
+  color: white !important;
+}
+.login_btn:focus {
+  box-shadow: none !important;
+  outline: 0px !important;
+}
+
+.login_container {
+  padding: 0 2rem;
+}
+.input-group-text {
+  background: #c0392b !important;
+  color: white !important;
+  border: 0 !important;
+  border-radius: 0.25rem 0 0 0.25rem !important;
+}
+.input_user,
+.input_pass:focus {
+  box-shadow: none !important;
+  outline: 0px !important;
+}
+.custom-checkbox .custom-control-input:checked ~ .custom-controllabel::before {
+  background-color: #c0392b !important;
+}
+
+#deny {
+  margin-top: 20px;
+  background-color: #ff6b6b !important;
+  border-radius: 10px;
+}
+
+#deny__cookie {
+  background-color: #ff6b6b !important;
+  border-color: #ff6b6b;
+  color: #fff !important;
+}
+
+#invalid {
+  margin-top: 20px;
+
+  background-color: #ff6b6b !important;
+  border-radius: 10px;
+}
+
+#invalid_user {
+  background-color: #ff6b6b !important;
+  border-color: #ff6b6b;
+  color: #fff !important;
+}
+
+.profile-image {
+  max-width: 50px; /* Define el ancho máximo */
+  max-height: 50px; /* Define el alto máximo */
 }

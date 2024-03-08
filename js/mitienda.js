@@ -31,6 +31,7 @@ const historyActions = {
     ManagerApp.handleModifyMenuForm();
     ManagerApp.handleCategoriesAssignedToDish(event.state.dish);
   },
+  login: () => ManagerApp.handleLoginForm(),
 };
 
 window.addEventListener("popstate", (event) => {

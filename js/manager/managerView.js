@@ -603,6 +603,17 @@ class ManagerView {
       });
   }
 
+  bindHeartClick(handler) {
+    // Agrega un evento 'click' al elemento con id 'heart-icon'
+    const heartIcon = document.getElementById("heart-icon");
+    heartIcon.addEventListener("click", handler);
+  }
+
+  bindFavDishes(handler) {
+    const fav = document.getElementById("favDishes");
+    fav.addEventListener("click", handler);
+  }
+
   // Método para mostrar las categorías de platos
   showCategories(categories) {
     // Elimina el contenido actual de la sección de categorías si existe
@@ -699,6 +710,7 @@ class ManagerView {
                       <div>Descripción: ${dish.Dish.description}</div><br>
                       <div>Ingredientes: ${dish.Dish.ingredients}</div> 
                       <button id="b-open" data-dish="${dish.Dish.name}" class="btn btn-primary text-uppercase mr-2 px-4">Abrir en nueva ventana</button>
+                      <i id="heart-icon" data-dish="${dish.Dish.name}" class="fas fa-heart text-white fa-lg"></i> <!-- Icono de corazón -->
                   </div>
               </a>
           </div>
@@ -707,6 +719,14 @@ class ManagerView {
 
     // Agrega el contenedor a la sección 'ficha' en el documento
     this.ficha.append(container);
+
+    // Agregar evento clic al contenedor de icono de corazón
+    const heartContainer = container.querySelector(".dish-list-text");
+    heartContainer.addEventListener("click", function () {
+      const heartIcon = container.querySelector("#heart-icon");
+      // Cambiar el color del corazón a rojo
+      heartIcon.classList.toggle("text-danger");
+    });
   }
 
   // Método para mostrar los detalles de un restaurante
@@ -1039,6 +1059,21 @@ class ManagerView {
       '<li><a id="lmodCategory" class="dropdown-item" href="#mod-categoría">Modificar categoría</a></li>'
     );
     menuOption.append(suboptions);
+    this.menu.append(menuOption);
+  }
+
+  showFavDishesInMenu() {
+    const menuOption = document.createElement("li");
+
+    menuOption.insertAdjacentHTML(
+      "beforeend",
+      `<a class=""
+      href="#" id="favDishes" role="button"
+      aria-expanded="false"
+      style="text-decoration: none;color: #ffffff;
+      font-weight: bold;
+      transition: color 0.3s;">Platos favoritos</a>`
+    );
     this.menu.append(menuOption);
   }
 
@@ -1934,17 +1969,17 @@ class ManagerView {
     if (done) {
       body.insertAdjacentHTML(
         "afterbegin",
-        `<div class="p-3">Hola ${user}</div>`
+        `<div class="p-3">Hola <strong>${user}</strong></div>`
+      );
+    } else {
+      title.innerHTML = "Acceso incorrecto";
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">Necesitas iniciar sesión para agregar platos favoritos</strong></div>`
       );
     }
     messageModal.show();
-    const listener = (event) => {
-      if (done) {
-        document.fLogin.reset();
-      }
-      document.fLogin.username.focus();
-    };
-    messageModalContainer.addEventListener("hidden.bs.modal", listener, {
+    messageModalContainer.addEventListener("hidden.bs.modal", {
       once: true,
     });
   }
@@ -1980,6 +2015,77 @@ class ManagerView {
   removeAdminMenu() {
     const adminMenu = document.getElementById("adminMenu");
     if (adminMenu) adminMenu.parentElement.remove();
+  }
+
+  showFavDishModal(done, dish) {
+    const messageModalContainer = document.getElementById("messageModal");
+    const messageModal = new bootstrap.Modal("#messageModal");
+
+    const title = document.getElementById("messageModalTitle");
+    title.innerHTML = "Acceso correcto";
+    const body = messageModalContainer.querySelector(".modal-body");
+    body.replaceChildren();
+    if (done) {
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El plato ${dish} se ha asignado como favorito</div>`
+      );
+    } else {
+      title.innerHTML = "Plato no añadido";
+      body.insertAdjacentHTML(
+        "afterbegin",
+        `<div class="p-3">El plato ${dish} ya está asignado como favorito</div>`
+      );
+    }
+    messageModal.show();
+    messageModalContainer.addEventListener("hidden.bs.modal", {
+      once: true,
+    });
+  }
+
+  removeFavDishes() {
+    const favDishes = document.getElementById("favDishes");
+    if (favDishes) favDishes.parentElement.remove();
+  }
+
+  // Método para mostrar los platos
+  showFavDishes(dishes) {
+    // Elimina el contenido actual de la sección de platos si existe
+    this.categories.replaceChildren();
+    this.ficha.replaceChildren();
+    this.main.replaceChildren();
+    if (this.dishes.children.length > 0) this.dishes.children[0].remove();
+
+    // Crea un contenedor div para los platos
+    const container = document.createElement("div");
+    container.id = "dishes-list";
+    container.classList.add("row");
+    container.insertAdjacentHTML(
+      "afterbegin",
+      `<h3 class="text-center text-white">Algunos de nuestros exquisitos platos</h3>`
+    );
+
+    // Itera sobre los platos y agrega el HTML correspondiente al contenedor
+    for (const dish of dishes) {
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
+                  <div class="col-lg-3 col-md-6 bg-dark text-center">
+                      <a data-dish="${dish.Dish.name}" href="#dish-list" class="text-decoration-none">
+                          <div class="dish-list-image">
+                              <img alt="${dish.Dish.name}" src="${dish.Dish.image}" />
+                          </div>
+                          <div class="dish-list-text text-white">
+                              <h3>${dish.Dish.name}</h3>
+                          </div>
+                      </a>
+                  </div>
+              `
+      );
+    }
+
+    // Agrega el contenedor al elemento de platos en el documento
+    this.dishes.append(container);
   }
 }
 // Exporta la clase ManagerView

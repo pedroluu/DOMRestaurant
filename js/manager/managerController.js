@@ -13,6 +13,7 @@ const VIEW = Symbol("managerView");
 const LOAD_MANAGER_OBJECTS = Symbol("Load Manager Objects");
 const AUTH = Symbol("AUTH");
 const USER = Symbol("USER");
+const FAVDISHES = Symbol("FAVDISHES");
 
 class ManagerController {
   constructor(modelManager, viewManager, auth) {
@@ -20,6 +21,7 @@ class ManagerController {
     this[VIEW] = viewManager;
     this[AUTH] = auth;
     this[USER] = null;
+    this[FAVDISHES] = [];
 
     this.onLoad();
     this.onInit();
@@ -174,6 +176,9 @@ class ManagerController {
       if (user) {
         this[USER] = user;
         this.onOpenSession();
+        let done = true;
+        console.log(this[USER]);
+        this[VIEW].showValidUserModal(done, this[USER].username);
       }
     } else {
       this.onCloseSession();
@@ -221,10 +226,10 @@ class ManagerController {
   // Manejador de eventos para manejar los detalles de un plato
   handleDishDetails = (name) => {
     // Crea un plato y muestra sus detalles en la vista
-    console.log(name);
     const dish = this[MODEL].createDish(name);
     this[VIEW].showDish(dish);
     // Establece un enlace de evento para mostrar el plato en una nueva ventana
+    this[VIEW].bindHeartClick(this.handleHeartClick);
     this[VIEW].bindShowDishInNewWindow(this.handleDishInNewWindow);
   };
   // Manejador de eventos para mostrar detalles de un restaurante
@@ -565,6 +570,49 @@ class ManagerController {
     this[VIEW].initHistory();
   };
 
+  handleHeartClick = () => {
+    const heartIcon = document.getElementById("heart-icon");
+    const dish = heartIcon.dataset.dish;
+    let done;
+    let error;
+
+    if (this[USER]) {
+      // Si existe un localStorage obtenemos los platos
+      if (localStorage.getItem("arrayFavs")) {
+        this[FAVDISHES] = JSON.parse(localStorage.getItem("arrayFavs"));
+      }
+
+      if (this[FAVDISHES].includes(dish)) {
+        done = false;
+      } else {
+        this[FAVDISHES].push(dish);
+        localStorage.setItem("arrayFavs", JSON.stringify(this[FAVDISHES]));
+        done = true;
+      }
+      this[VIEW].showFavDishModal(done, dish);
+    } else {
+      this[VIEW].showValidUserModal(done);
+    }
+
+    // Cambiar el color del corazón a rojo
+    heartIcon.classList.toggle("text-danger");
+  };
+
+  handleFavDishes = () => {
+    var arrayRecuperado = JSON.parse(localStorage.getItem("arrayFavs"));
+    const dishes = [];
+
+    for (const dish of arrayRecuperado) {
+      const dishFav = this[MODEL].createDish(dish);
+
+      dishes.push(dishFav);
+    }
+
+    this[VIEW].showFavDishes(dishes);
+
+    console.log(arrayRecuperado);
+  };
+
   // Método para agregar categorías
   onAddCategory = () => {
     // Muestra las categorías en el menú y establece enlaces de eventos para manejar las acciones relacionadas con las categorías
@@ -607,6 +655,7 @@ class ManagerController {
     this[VIEW].initHistory();
     this[VIEW].showAuthUserProfile(this[USER]);
     this[VIEW].showAdminMenu();
+    this[VIEW].showFavDishesInMenu();
 
     // Establece una función de manejo de eventos para cerrar ventanas
 
@@ -619,6 +668,7 @@ class ManagerController {
       this.handleModifyMenuForm,
       this.handleModifyCategoriesForm
     );
+    this[VIEW].bindFavDishes(this.handleFavDishes);
     this[VIEW].bindCloseSession(this.handleCloseSession);
   }
 
@@ -628,6 +678,7 @@ class ManagerController {
     this[VIEW].showIdentificationLink();
     this[VIEW].bindIdentificationLink(this.handleLoginForm);
     this[VIEW].removeAdminMenu();
+    this[VIEW].removeFavDishes();
   }
 }
 export default ManagerController;
